@@ -5,6 +5,30 @@
 {% block content %}
     <h2>Welcome to LuxStay Hotel</h2>
     
+    <!-- Daily Quote Section -->
+    {% if daily_quote %}
+        <div class="api-section">
+            <h3>Quote of the Day</h3>
+            <blockquote>
+                <p>"{{ daily_quote.quote }}"</p>
+                <footer>- {{ daily_quote.author }}</footer>
+            </blockquote>
+        </div>
+    {% endif %}
+    
+    <!-- Exchange Rate API Section -->
+    {% if exchange_rates %}
+        <div class="api-section">
+            <h3>Current Exchange Rates (USD)</h3>
+            <p>EUR: {{ exchange_rates.EUR }}</p>
+            <p>GBP: {{ exchange_rates.GBP }}</p>
+            <p>BYN: {{ exchange_rates.BYN }}</p>
+            <p>RUB: {{ exchange_rates.RUB }}</p>
+            <p><small>Updated at: {{ exchange_rates.timestamp }}</small></p>
+        </div>
+    {% endif %}
+    
+    <!-- Latest Article Section -->
     {% if latest_article %}
         <div>
             <h3>Latest News: {{ latest_article.title }}</h3>

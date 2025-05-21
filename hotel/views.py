@@ -1,17 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms import inlineformset_factory
 from django.contrib.auth import login, logout
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django import forms
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.db.models import Min, Max
-
+import requests
+import json
 from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
     PromoCode, Room, RoomCategory, RoomImage, Reservation, Client, Service
@@ -21,7 +21,20 @@ from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
 
 def home(request):
     latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
-    return render(request, 'hotel/home.html', {'latest_article': latest_article})
+    
+    # Get the daily quote
+    daily_quote = get_daily_quote()
+    
+    # Get currency exchange rates
+    exchange_rates = get_exchange_rates()
+    
+    context = {
+        'latest_article': latest_article,
+        'daily_quote': daily_quote,  # Add the daily quote to the context
+        'exchange_rates': exchange_rates,
+    }
+    
+    return render(request, 'hotel/home.html', context)
 
 def about(request):
     company_info = CompanyInfo.objects.first()
@@ -390,3 +403,51 @@ def book_room(request, room_id):
         'form': form,
         'room': room
     })
+
+def get_daily_quote():
+    """Get a daily quote from FavQs API"""
+    url = "https://favqs.com/api/qotd"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        
+        if response.status_code == 200:
+            quote_data = {
+                'quote': data['quote']['body'],
+                'author': data['quote']['author']
+            }
+            return quote_data
+        else:
+            print(f"FavQs API error: {response.status_code}")
+            return None
+    except Exception as e:
+        print(f"Error fetching daily quote: {e}")
+        return None
+
+def get_exchange_rates(base_currency="USD"):
+    """Get current exchange rates"""
+    api_key = "0da4b4143b44e87f2cf45a11"  # Replace with your ExchangeRate API key
+    url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
+    
+    try:
+        response = requests.get(url)
+        data = response.json()
+        
+        
+        if response.status_code == 200 and data['result'] == 'success':
+            # Extract just a few important currencies
+            rates = {
+                'EUR': data['conversion_rates'].get('EUR'),
+                'GBP': data['conversion_rates'].get('GBP'),
+                'BYN': data['conversion_rates'].get('BYN'),
+                'RUB': data['conversion_rates'].get('RUB'),
+                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            return rates
+        else:
+            return None
+    except Exception as e:
+        print(f"Error fetching exchange rates: {e}")
+        return None
+
