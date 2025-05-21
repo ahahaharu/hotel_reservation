@@ -1,4 +1,6 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
 from . import views
 
 app_name = 'hotel'
@@ -18,4 +20,7 @@ urlpatterns = [
     path('rooms/create/', views.RoomCreateView.as_view(), name='room_create'),
     path('rooms/<int:pk>/update/', views.RoomUpdateView.as_view(), name='room_update'),
     path('rooms/<int:pk>/delete/', views.RoomDeleteView.as_view(), name='room_delete'),
+
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.logout_view, name='logout'),
 ]

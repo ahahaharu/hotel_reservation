@@ -1,20 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Room, RoomCategory, RoomImage, Client
-
-class RoomForm(forms.ModelForm):
-    class Meta:
-        model = Room
-        fields = ['room_number', 'category', 'status', 'capacity', 'description']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-        }
-
-class RoomImageForm(forms.ModelForm):
-    class Meta:
-        model = RoomImage
-        fields = ['image', 'caption']
+from .models import Client
 
 class UserRegisterForm(UserCreationForm):
     """Extended user registration form with email field"""
@@ -46,7 +33,7 @@ class UserRegisterForm(UserCreationForm):
             client.save()
         
         return user
-
+    
 class UserLoginForm(AuthenticationForm):
     """Custom login form with custom styling"""
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))

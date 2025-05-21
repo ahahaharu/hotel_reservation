@@ -20,11 +20,28 @@
                 <li><a href="{% url 'hotel:reviews' %}">Reviews</a></li>
                 <li><a href="{% url 'hotel:promo_codes' %}">Promo Codes</a></li>
                 <li><a href="{% url 'hotel:room_list' %}">Rooms</a></li>
+                
+                <!-- Add authentication links -->
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'hotel:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'hotel:login' %}">Login</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
     
     <main>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
         {% block content %}
         {% endblock %}
     </main>

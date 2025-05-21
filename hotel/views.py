@@ -4,12 +4,16 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
+from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.auth.decorators import login_required
 
 from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
     PromoCode, Room, RoomCategory, RoomImage
 )
 from .forms import RoomForm, RoomImageForm
+from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
 
 def home(request):
     latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
@@ -73,7 +77,12 @@ class RoomCreateView(LoginRequiredMixin, CreateView):
     form_class = RoomForm
     template_name = 'hotel/room_form.html'
     success_url = reverse_lazy('hotel:room_list')
-    login_url = '/admin/login/'
+    login_url = reverse_lazy('hotel:login')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff and not request.user.is_superuser:
+            return redirect('hotel:login')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -108,7 +117,12 @@ class RoomUpdateView(LoginRequiredMixin, UpdateView):
     form_class = RoomForm
     template_name = 'hotel/room_form.html'
     context_object_name = 'room'
-    login_url = '/admin/login/'
+    login_url = reverse_lazy('hotel:login')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff and not request.user.is_superuser:
+            return redirect('hotel:login')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_success_url(self):
         return reverse_lazy('hotel:room_detail', kwargs={'pk': self.object.pk})
@@ -150,7 +164,12 @@ class RoomDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'hotel/room_confirm_delete.html'
     success_url = reverse_lazy('hotel:room_list')
     context_object_name = 'room'
-    login_url = '/admin/login/'
+    login_url = reverse_lazy('hotel:login')
+    
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff and not request.user.is_superuser:
+            return redirect('hotel:login')
+        return super().dispatch(request, *args, **kwargs)
 
 # Initialize formset for room images
 RoomImageFormSet = inlineformset_factory(
@@ -160,3 +179,46 @@ RoomImageFormSet = inlineformset_factory(
     extra=1, 
     can_delete=True
 )
+
+class RegisterView(CreateView):
+    form_class = UserRegisterForm
+    template_name = 'hotel/auth/register.html'
+    success_url = reverse_lazy('hotel:login')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        return response
+
+class CustomLoginView(LoginView):
+    form_class = UserLoginForm
+    template_name = 'hotel/auth/login.html'
+    
+    def get_success_url(self):
+        return reverse_lazy('hotel:home')
+
+def logout_view(request):
+    logout(request)
+    return redirect('hotel:home')
+
+@login_required
+def profile_view(request):
+    client = request.user.client
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=client)
+        if form.is_valid():
+            form.save()
+            return redirect('hotel:profile')
+    else:
+        form = UserProfileForm(instance=client)
+    
+    reservations = client.reservations.all().order_by('-check_in_date')
+    reviews = client.reviews.all().order_by('-date_posted')
+    
+    context = {
+        'form': form,
+        'reservations': reservations,
+        'reviews': reviews
+    }
+    
+    return render(request, 'hotel/auth/profile.html', context)
