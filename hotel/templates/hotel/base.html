@@ -4,13 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}LuxStay Hotel{% endblock %}</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            
+            document.cookie = `user_timezone=${timezone}; path=/; SameSite=Lax`;
+            
+            const timezoneElement = document.getElementById('user-timezone');
+            if (timezoneElement) {
+                timezoneElement.textContent = timezone;
+            }
+        });
+    </script>
 </head>
 <body>
     <header>
         <h1>LuxStay Hotel</h1>
+        
+        <div class="datetime-info">
+            <div>
+                <strong>Your Timezone:</strong> <span id="user-timezone">{{ user_timezone|default:"Detecting..." }}</span>
+            </div>
+            <div>
+                <strong>Current Date (Your Time):</strong> {{ user_current_date|date:"d/m/Y" }}
+            </div>
+            <div>
+                <strong>Current Date (UTC):</strong> {{ utc_current_date|date:"d/m/Y" }}
+            </div>
+            <div class="calendar">
+                <strong>Calendar:</strong>
+                <pre>{{ text_calendar|safe }}</pre>
+            </div>
+        </div>
+        
         <nav>
             <ul>
-                <!-- Common navigation items -->
                 <li><a href="{% url 'hotel:home' %}">Home</a></li>
                 <li><a href="{% url 'hotel:about' %}">About</a></li>
                 <li><a href="{% url 'hotel:news' %}">News</a></li>
@@ -23,7 +51,6 @@
                 <li><a href="{% url 'hotel:services' %}">Our Services</a></li> 
                 <li><a href="{% url 'hotel:room_list' %}">Rooms</a></li>
                 
-                <!-- Authentication and role-specific links -->
                 {% if user.is_authenticated %}
                     {% if user.is_staff or user.is_superuser %}
                         <li><a href="{% url 'hotel:staff_dashboard' %}">Staff Dashboard</a></li>
