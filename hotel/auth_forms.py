@@ -87,35 +87,54 @@ class UserLoginForm(AuthenticationForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-class UserProfileForm(forms.ModelForm):
-    """Form for updating user profile (Client model)"""
+class UserRegisterForm(UserCreationForm):
+    """Extended user registration form with email field"""
+    email = forms.EmailField(
+        required=True,
+        help_text="Enter a valid email address."
+    )
+    first_name = forms.CharField(
+        max_length=50,
+        required=True,
+        help_text="Enter your first name."
+    )
+    last_name = forms.CharField(
+        max_length=50,
+        required=True,
+        help_text="Enter your last name."
+    )
     phone = forms.CharField(
-        max_length=20, 
+        max_length=20,
         required=True,
         help_text="Format: +375 (29) XXX-XX-XX or (29) XXX-XX-XX"
     )
     date_of_birth = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
         required=True,
-        help_text="Must be at least 18 years old"
+        help_text="Must be at least 18 years old."
     )
     
     class Meta:
-        model = Client
-        fields = ['first_name', 'last_name', 'phone', 'address', 'date_of_birth']
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'date_of_birth', 'password1', 'password2']
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise ValidationError("This email is already registered.")
+        return email
     
     def clean_phone(self):
         phone = self.cleaned_data.get('phone')
         return validate_and_format_phone(phone)
-
+    
     def clean_date_of_birth(self):
-        """Validate that the user is at least 18 years old"""
         dob = self.cleaned_data.get('date_of_birth')
         if dob:
             today = date.today()
             age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
             if age < 18:
-                raise ValidationError("You must be at least 18 years old.")
+                raise ValidationError("You must be at least 18 years old to register.")
         return dob
     
 def validate_and_format_phone(value):

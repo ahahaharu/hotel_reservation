@@ -1,15 +1,13 @@
 {% extends "hotel/base.html" %}
 
-{% block title %}Room List - LuxStay Hotel{% endblock %}
+{% block title %}Room List - Hotel{% endblock %}
 
 {% block content %}
     <h2>Our Rooms</h2>
     
-    <!-- Search and Filtering form -->
     <div class="filter-container">
         <h3>Search and Filter Rooms</h3>
         <form method="get" action="{% url 'hotel:room_list' %}">
-            <!-- Search Field -->
             <div class="form-group">
                 <label for="id_search">Search:</label>
                 {{ filter_form.search }}
