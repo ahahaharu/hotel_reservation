@@ -9,7 +9,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django import forms
 from datetime import date, timedelta, datetime
-from django.db.models import Min, Max
+from django.db.models import Min, Max, Count, Sum
+from collections import Counter
+from statistics import median, mode
+from django.db.models.functions import TruncMonth
 import requests
 import json
 from .models import (
@@ -451,3 +454,80 @@ def get_exchange_rates(base_currency="USD"):
         print(f"Error fetching exchange rates: {e}")
         return None
 
+@login_required
+@user_passes_test(is_staff_user)
+def statistics_view(request):
+    """View for displaying hotel statistics and analytics"""
+    
+    # 1. Rooms by category (in alphabetical order)
+    rooms_by_category = Room.objects.values('category__name').annotate(
+        count=Count('id')
+    ).order_by('category__name')
+    
+    # 2. Total sales
+    total_revenue = Reservation.objects.aggregate(total=Sum('total_price'))['total'] or 0
+    
+    # 3. Statistical measures for sales
+    reservation_amounts = list(Reservation.objects.values_list('total_price', flat=True))
+    if reservation_amounts:
+        avg_sale = sum(reservation_amounts) / len(reservation_amounts)
+        median_sale = median(reservation_amounts)
+        # For mode, we need to handle potential multi-modal data
+        try:
+            mode_sale = mode(reservation_amounts)
+        except:
+            # If there are multiple modes, take the first one
+            counter = Counter(reservation_amounts)
+            mode_sale = counter.most_common(1)[0][0]
+    else:
+        avg_sale = median_sale = mode_sale = 0
+    
+    # 4. Most popular room categories
+    popular_categories = RoomCategory.objects.annotate(
+        reservation_count=Count('rooms__reservations')
+    ).order_by('-reservation_count')
+    
+    # 5. Most profitable room categories
+    profitable_categories = RoomCategory.objects.annotate(
+        revenue=Sum('rooms__reservations__total_price')
+    ).order_by('-revenue')
+    
+    # 6. Monthly revenue trends
+    monthly_revenue = Reservation.objects.annotate(
+        month=TruncMonth('check_in_date')
+    ).values('month').annotate(
+        revenue=Sum('total_price')
+    ).order_by('month')
+    
+    # 7. Occupancy rate analysis
+    total_rooms = Room.objects.count()
+    occupied_rooms = Room.objects.filter(status__in=['occupied', 'reserved']).count()
+    occupancy_rate = (occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0
+    
+    # 8. Average length of stay
+    reservations = Reservation.objects.all()
+    if reservations:
+        stay_durations = []
+        for reservation in reservations:
+            duration = (reservation.check_out_date - reservation.check_in_date).days
+            stay_durations.append(duration)
+        avg_stay = sum(stay_durations) / len(stay_durations)
+        median_stay = median(stay_durations)
+    else:
+        avg_stay = median_stay = 0
+    
+    context = {
+        'rooms_by_category': rooms_by_category,
+        'total_revenue': total_revenue,
+        'avg_sale': avg_sale,
+        'median_sale': median_sale,
+        'mode_sale': mode_sale,
+        'popular_categories': popular_categories,
+        'profitable_categories': profitable_categories,
+        'monthly_revenue': monthly_revenue,
+        'occupancy_rate': occupancy_rate,
+        'avg_stay': avg_stay,
+        'median_stay': median_stay,
+    }
+    
+    return render(request, 'hotel/statistics.html', context)

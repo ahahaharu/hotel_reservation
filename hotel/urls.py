@@ -35,4 +35,5 @@ urlpatterns = [
 
     # Services URL
     path('services/', views.services, name='services'),
+    path('statistics/', views.statistics_view, name='statistics'),
 ]

@@ -28,6 +28,7 @@
                     {% if user.is_staff or user.is_superuser %}
                         <li><a href="{% url 'hotel:staff_dashboard' %}">Staff Dashboard</a></li>
                         <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+                        <li><a href="{% url 'hotel:statistics' %}">Statistics</a></li>
                     {% else %}
                         <li><a href="{% url 'hotel:client_dashboard' %}">My Dashboard</a></li>
                     {% endif %}
