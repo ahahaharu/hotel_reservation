@@ -1,0 +1,32 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Room List - LuxStay Hotel{% endblock %}
+
+{% block content %}
+    <h2>Rooms</h2>
+    
+    <div>
+        <a href="{% url 'hotel:room_create' %}">Add New Room</a>
+    </div>
+    
+    {% if rooms %}
+        <ul>
+            {% for room in rooms %}
+                <li>
+                    <h3>Room {{ room.room_number }}</h3>
+                    <p>Category: {{ room.category.name }}</p>
+                    <p>Status: {{ room.get_status_display }}</p>
+                    <p>Capacity: {{ room.capacity }} person(s)</p>
+                    
+                    <div>
+                        <a href="{% url 'hotel:room_detail' room.pk %}">View Details</a> | 
+                        <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> | 
+                        <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No rooms available.</p>
+    {% endif %}
+{% endblock %}

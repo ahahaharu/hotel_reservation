@@ -13,4 +13,9 @@ urlpatterns = [
     path('vacancies/', views.vacancies, name='vacancies'),
     path('reviews/', views.reviews, name='reviews'),
     path('promo-codes/', views.promo_codes, name='promo_codes'),
+    path('rooms/', views.RoomListView.as_view(), name='room_list'),
+    path('rooms/<int:pk>/', views.RoomDetailView.as_view(), name='room_detail'),
+    path('rooms/create/', views.RoomCreateView.as_view(), name='room_create'),
+    path('rooms/<int:pk>/update/', views.RoomUpdateView.as_view(), name='room_update'),
+    path('rooms/<int:pk>/delete/', views.RoomDeleteView.as_view(), name='room_delete'),
 ]
