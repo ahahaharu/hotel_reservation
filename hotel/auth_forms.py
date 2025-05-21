@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
 from .models import Client
+from datetime import date, timedelta
 
 class UserRegisterForm(UserCreationForm):
     """Extended user registration form with email field"""
@@ -15,14 +16,30 @@ class UserRegisterForm(UserCreationForm):
         required=True,
         help_text="Format: +375 (29) XXX-XX-XX or (29) XXX-XX-XX"
     )
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=True,
+        help_text="Must be at least 18 years old"
+    )
     
     class Meta:
         model = User
-        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+        fields = ['username', 'email', 'first_name', 'last_name', 'date_of_birth', 'password1', 'password2']
     
     def clean_phone(self):
+        # Get the phone number and clean it
         phone = self.cleaned_data.get('phone')
         return validate_and_format_phone(phone)
+    
+    def clean_date_of_birth(self):
+        """Validate that the user is at least 18 years old"""
+        dob = self.cleaned_data.get('date_of_birth')
+        if dob:
+            today = date.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if age < 18:
+                raise ValidationError("You must be at least 18 years old to register.")
+        return dob
     
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -37,7 +54,29 @@ class UserRegisterForm(UserCreationForm):
                 first_name=self.cleaned_data['first_name'],
                 last_name=self.cleaned_data['last_name'],
                 email=self.cleaned_data['email'],
-                phone=self.cleaned_data['phone']  
+                phone=self.cleaned_data['phone'],  
+                date_of_birth=self.cleaned_data['date_of_birth'] 
+            )
+            client.save()
+        
+        return user
+    
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        
+        if commit:
+            user.save()
+            client = Client(
+                user=user,
+                first_name=self.cleaned_data['first_name'],
+                last_name=self.cleaned_data['last_name'],
+                email=self.cleaned_data['email'],
+                phone=self.cleaned_data['phone'],
+                date_of_birth=self.cleaned_data['date_of_birth'] 
             )
             client.save()
         
@@ -55,15 +94,29 @@ class UserProfileForm(forms.ModelForm):
         required=True,
         help_text="Format: +375 (29) XXX-XX-XX or (29) XXX-XX-XX"
     )
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=True,
+        help_text="Must be at least 18 years old"
+    )
     
     class Meta:
         model = Client
-        fields = ['first_name', 'last_name', 'phone', 'address']
+        fields = ['first_name', 'last_name', 'phone', 'address', 'date_of_birth']
     
     def clean_phone(self):
-        # Get the phone number and clean it
         phone = self.cleaned_data.get('phone')
         return validate_and_format_phone(phone)
+
+    def clean_date_of_birth(self):
+        """Validate that the user is at least 18 years old"""
+        dob = self.cleaned_data.get('date_of_birth')
+        if dob:
+            today = date.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if age < 18:
+                raise ValidationError("You must be at least 18 years old.")
+        return dob
     
 def validate_and_format_phone(value):
     """Validate and format Belarusian phone number"""

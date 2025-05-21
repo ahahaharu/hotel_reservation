@@ -30,13 +30,17 @@ class ServiceBookingInline(admin.TabularInline):
 # Update the ClientAdmin class
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'formatted_phone')
+    list_display = ('first_name', 'last_name', 'email', 'formatted_phone', 'get_age')
     search_fields = ('first_name', 'last_name', 'email', 'phone')
     inlines = [ReservationInline, ReviewInline]
     
     def formatted_phone(self, obj):
         return obj.phone
     formatted_phone.short_description = 'Phone Number'
+    
+    def get_age(self, obj):
+        return obj.age if obj.age is not None else "N/A"
+    get_age.short_description = 'Age'
 
 @admin.register(RoomCategory)
 class RoomCategoryAdmin(admin.ModelAdmin):

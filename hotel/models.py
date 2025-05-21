@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import date
+
 
 class Client(models.Model):
     """Client model representing hotel guests"""
@@ -10,9 +12,20 @@ class Client(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
     address = models.TextField(blank=True, null=True)
+    date_of_birth = models.DateField(null=True)  # Add this field
     
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    @property
+    def age(self):
+        """Calculate age based on date of birth"""
+        if self.date_of_birth:
+            today = date.today()
+            return today.year - self.date_of_birth.year - (
+                (today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day)
+            )
+        return None
 
 class RoomCategory(models.Model):
     """Model for different categories of rooms"""

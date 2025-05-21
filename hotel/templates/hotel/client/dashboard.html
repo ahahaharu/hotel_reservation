@@ -5,6 +5,19 @@
 {% block content %}
     <h2>Welcome, {{ client.first_name }}</h2>
     
+    <div class="client-info">
+        <h3>Your Information</h3>
+        <p>Name: {{ client.first_name }} {{ client.last_name }}</p>
+        <p>Email: {{ client.email }}</p>
+        <p>Phone: {{ client.phone }}</p>
+        {% if client.age %}
+            <p>Age: {{ client.age }}</p>
+        {% endif %}
+        {% if client.address %}
+            <p>Address: {{ client.address }}</p>
+        {% endif %}
+    </div>
+    
     <h3>Your Reservations</h3>
     {% if reservations %}
         <table>
