@@ -9,6 +9,9 @@
         <ul>
             {% for member in staff %}
                 <li>
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="max-width: 200px; border-radius: 5px; margin-bottom: 10px;">
+                    {% endif %}
                     <h3>{{ member.name }} - {{ member.position }}</h3>
                     <p>{{ member.description }}</p>
                     {% if member.email %}
