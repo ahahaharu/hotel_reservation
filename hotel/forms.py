@@ -17,6 +17,7 @@ class RoomImageForm(forms.ModelForm):
         fields = ['image', 'caption']
 
 class RoomFilterForm(forms.Form):
+    # Existing filters
     category = forms.ModelChoiceField(
         queryset=RoomCategory.objects.all(),
         required=False,
@@ -42,4 +43,25 @@ class RoomFilterForm(forms.Form):
         initial=True,
         label="Show only available rooms"
     )
-
+    
+    search = forms.CharField(
+        required=False,
+        label="Search",
+        widget=forms.TextInput(attrs={'placeholder': 'Search room number or description'})
+    )
+    
+    SORT_CHOICES = [
+        ('room_number', 'Room Number (ascending)'),
+        ('-room_number', 'Room Number (descending)'),
+        ('category__base_price', 'Price (low to high)'),
+        ('-category__base_price', 'Price (high to low)'),
+        ('capacity', 'Capacity (low to high)'),
+        ('-capacity', 'Capacity (high to low)'),
+    ]
+    
+    sort_by = forms.ChoiceField(
+        choices=SORT_CHOICES,
+        required=False,
+        initial='room_number',
+        label="Sort by"
+    )

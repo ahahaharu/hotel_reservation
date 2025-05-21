@@ -24,6 +24,7 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 from django.core.files.base import ContentFile
 from .models import ChartImage
+from django.db.models import Q
 
 def home(request):
     latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
@@ -91,34 +92,45 @@ class RoomListView(ListView):
         form = RoomFilterForm(self.request.GET)
         
         if form.is_valid():
-            # Filter by category if provided
+            # Existing filters
             if form.cleaned_data.get('category'):
                 queryset = queryset.filter(category=form.cleaned_data['category'])
             
-            # Filter by minimum price if provided
             if form.cleaned_data.get('min_price'):
                 queryset = queryset.filter(category__base_price__gte=form.cleaned_data['min_price'])
             
-            # Filter by maximum price if provided
             if form.cleaned_data.get('max_price'):
                 queryset = queryset.filter(category__base_price__lte=form.cleaned_data['max_price'])
             
-            # Filter by capacity if provided
             if form.cleaned_data.get('capacity'):
                 queryset = queryset.filter(capacity__gte=form.cleaned_data['capacity'])
             
-            # Filter by availability if checkbox is checked
             if form.cleaned_data.get('available_only'):
                 queryset = queryset.filter(status='available')
-        
-        return queryset.order_by('room_number')
+            
+            # Add search functionality
+            search_query = form.cleaned_data.get('search')
+            if search_query:
+                queryset = queryset.filter(
+                    Q(room_number__icontains=search_query) |
+                    Q(description__icontains=search_query) |
+                    Q(category__name__icontains=search_query)
+                )
+            
+            # Add sorting
+            sort_by = form.cleaned_data.get('sort_by')
+            if sort_by:
+                queryset = queryset.order_by(sort_by)
+            else:
+                queryset = queryset.order_by('room_number')
+                
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = RoomCategory.objects.all()
         context['is_staff'] = self.request.user.is_staff or self.request.user.is_superuser
         context['filter_form'] = RoomFilterForm(self.request.GET)
-        # Add min and max prices for the range filter
         context['min_room_price'] = RoomCategory.objects.aggregate(Min('base_price'))['base_price__min'] or 0
         context['max_room_price'] = RoomCategory.objects.aggregate(Max('base_price'))['base_price__max'] or 1000
         return context
@@ -467,47 +479,38 @@ def statistics_view(request):
         count=Count('id')
     ).order_by('category__name')
     
-    # 2. Total sales
     total_revenue = Reservation.objects.aggregate(total=Sum('total_price'))['total'] or 0
     
-    # 3. Statistical measures for sales
     reservation_amounts = list(Reservation.objects.values_list('total_price', flat=True))
     if reservation_amounts:
         avg_sale = sum(reservation_amounts) / len(reservation_amounts)
         median_sale = median(reservation_amounts)
-        # For mode, we need to handle potential multi-modal data
         try:
             mode_sale = mode(reservation_amounts)
         except:
-            # If there are multiple modes, take the first one
             counter = Counter(reservation_amounts)
             mode_sale = counter.most_common(1)[0][0]
     else:
         avg_sale = median_sale = mode_sale = 0
     
-    # 4. Most popular room categories
     popular_categories = RoomCategory.objects.annotate(
         reservation_count=Count('rooms__reservations')
     ).order_by('-reservation_count')
     
-    # 5. Most profitable room categories
     profitable_categories = RoomCategory.objects.annotate(
         revenue=Sum('rooms__reservations__total_price')
     ).order_by('-revenue')
     
-    # 6. Monthly revenue trends
     monthly_revenue = Reservation.objects.annotate(
         month=TruncMonth('check_in_date')
     ).values('month').annotate(
         revenue=Sum('total_price')
     ).order_by('month')
     
-    # 7. Occupancy rate analysis
     total_rooms = Room.objects.count()
     occupied_rooms = Room.objects.filter(status__in=['occupied', 'reserved']).count()
     occupancy_rate = (occupied_rooms / total_rooms * 100) if total_rooms > 0 else 0
     
-    # 8. Average length of stay
     reservations = Reservation.objects.all()
     if reservations:
         stay_durations = []
@@ -539,16 +542,13 @@ def statistics_view(request):
 @user_passes_test(is_staff_user)
 def room_booking_distribution_chart(request):
     """Generate a bar chart for room bookings by category and save to media directory."""
-    # Get data for room bookings by category
     categories = RoomCategory.objects.annotate(
         booking_count=Count('rooms__reservations')
     ).order_by('-booking_count')
 
-    # Prepare data for the chart
     category_names = [category.name for category in categories]
     booking_counts = [category.booking_count for category in categories]
 
-    # Create the bar chart
     plt.figure(figsize=(10, 6))
     plt.bar(category_names, booking_counts, color='skyblue')
     plt.title('Room Bookings by Category')
@@ -562,13 +562,10 @@ def room_booking_distribution_chart(request):
 
     filename = f'room_bookings_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
     
-    # Create or get a ChartImage instance
     chart_image = ChartImage(title='Room Booking Distribution')
     
-    # Save the image to the model's ImageField
     chart_image.image.save(filename, ContentFile(buffer.getvalue()), save=True)
     
-    # Pass the image URL to the template
     return render(request, 'hotel/visualizations/room_booking_distribution.html', {
         'chart_image': chart_image
     })

@@ -5,10 +5,21 @@
 {% block content %}
     <h2>Our Rooms</h2>
     
-    <!-- Filtering form -->
+    <!-- Search and Filtering form -->
     <div class="filter-container">
-        <h3>Filter Rooms</h3>
+        <h3>Search and Filter Rooms</h3>
         <form method="get" action="{% url 'hotel:room_list' %}">
+            <!-- Search Field -->
+            <div class="form-group">
+                <label for="id_search">Search:</label>
+                {{ filter_form.search }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_sort_by">Sort by:</label>
+                {{ filter_form.sort_by }}
+            </div>
+            
             <div class="form-group">
                 <label for="id_category">Category:</label>
                 {{ filter_form.category }}
@@ -30,7 +41,7 @@
             </div>
             
             <button type="submit">Apply Filters</button>
-            <a href="{% url 'hotel:room_list' %}">Clear Filters</a>
+            <a href="{% url 'hotel:room_list' %}">Clear All</a>
         </form>
     </div>
     
@@ -40,8 +51,11 @@
     </div>
     {% endif %}
     
+    <div class="results-summary">
+        <p>Showing {{ rooms|length }} result(s)</p>
+    </div>
+    
     {% if rooms %}
-        
         <div class="room-list">
             <h3>Available Rooms</h3>
             <ul>
@@ -65,6 +79,6 @@
             </ul>
         </div>
     {% else %}
-        <p>No rooms match your filter criteria.</p>
+        <p>No rooms match your search criteria.</p>
     {% endif %}
 {% endblock %}
