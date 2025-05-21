@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
 from . import views
@@ -15,11 +15,12 @@ urlpatterns = [
     path('vacancies/', views.vacancies, name='vacancies'),
     path('reviews/', views.reviews, name='reviews'),
     path('promo-codes/', views.promo_codes, name='promo_codes'),
-    path('rooms/', views.RoomListView.as_view(), name='room_list'),
-    path('rooms/<int:pk>/', views.RoomDetailView.as_view(), name='room_detail'),
-    path('rooms/create/', views.RoomCreateView.as_view(), name='room_create'),
-    path('rooms/<int:pk>/update/', views.RoomUpdateView.as_view(), name='room_update'),
-    path('rooms/<int:pk>/delete/', views.RoomDeleteView.as_view(), name='room_delete'),
+
+    re_path(r'^rooms/$', views.RoomListView.as_view(), name='room_list'),
+    re_path(r'^rooms/(?P<pk>\d+)/$', views.RoomDetailView.as_view(), name='room_detail'),
+    re_path(r'^rooms/create/$', views.RoomCreateView.as_view(), name='room_create'),
+    re_path(r'^rooms/(?P<pk>\d+)/update/$', views.RoomUpdateView.as_view(), name='room_update'),
+    re_path(r'^rooms/(?P<pk>\d+)/delete/$', views.RoomDeleteView.as_view(), name='room_delete'),
 
     path('register/', views.RegisterView.as_view(), name='register'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
