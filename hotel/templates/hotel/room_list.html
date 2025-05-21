@@ -5,9 +5,11 @@
 {% block content %}
     <h2>Rooms</h2>
     
+    {% if is_staff %}
     <div>
         <a href="{% url 'hotel:room_create' %}">Add New Room</a>
     </div>
+    {% endif %}
     
     {% if rooms %}
         <ul>
@@ -19,9 +21,11 @@
                     <p>Capacity: {{ room.capacity }} person(s)</p>
                     
                     <div>
-                        <a href="{% url 'hotel:room_detail' room.pk %}">View Details</a> | 
-                        <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> | 
-                        <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+                        <a href="{% url 'hotel:room_detail' room.pk %}">View Details</a>
+                        {% if is_staff %}
+                        | <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> 
+                        | <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+                        {% endif %}
                     </div>
                 </li>
             {% endfor %}

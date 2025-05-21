@@ -21,6 +21,14 @@ urlpatterns = [
     path('rooms/<int:pk>/update/', views.RoomUpdateView.as_view(), name='room_update'),
     path('rooms/<int:pk>/delete/', views.RoomDeleteView.as_view(), name='room_delete'),
 
+    path('register/', views.RegisterView.as_view(), name='register'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
+
+    # Dashboard URLs
+    path('dashboard/', views.client_dashboard, name='client_dashboard'),
+    path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
+
+    # Booking URL
+    path('rooms/<int:room_id>/book/', views.book_room, name='book_room'),
 ]

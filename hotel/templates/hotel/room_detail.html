@@ -32,8 +32,20 @@
     </div>
     
     <div>
-        <a href="{% url 'hotel:room_list' %}">Back to Room List</a> | 
-        <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> | 
-        <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+        {% if user.is_authenticated and not is_staff and room.status == 'available' %}
+            <a href="{% url 'hotel:book_room' room.pk %}">Book This Room</a>
+        {% elif not user.is_authenticated %}
+            <p>Please <a href="{% url 'hotel:login' %}">login</a> to book this room.</p>
+        {% elif room.status != 'available' %}
+            <p>This room is currently not available for booking.</p>
+        {% endif %}
+    </div>
+    
+    <div>
+        <a href="{% url 'hotel:room_list' %}">Back to Room List</a>
+        {% if is_staff %}
+        | <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> 
+        | <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+        {% endif %}
     </div>
 {% endblock %}

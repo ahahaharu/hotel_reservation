@@ -2,15 +2,18 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.forms import inlineformset_factory
 from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django import forms
+from datetime import date, timedelta
 
 from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
-    PromoCode, Room, RoomCategory, RoomImage
+    PromoCode, Room, RoomCategory, RoomImage, Reservation, Client
 )
 from .forms import RoomForm, RoomImageForm
 from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
@@ -60,6 +63,7 @@ class RoomListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = RoomCategory.objects.all()
+        context['is_staff'] = self.request.user.is_staff or self.request.user.is_superuser
         return context
 
 class RoomDetailView(DetailView):
@@ -69,10 +73,11 @@ class RoomDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['is_staff'] = self.request.user.is_staff or self.request.user.is_superuser
         return context
 
 # CREATE operation
-class RoomCreateView(LoginRequiredMixin, CreateView):
+class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Room
     form_class = RoomForm
     template_name = 'hotel/room_form.html'
@@ -80,8 +85,8 @@ class RoomCreateView(LoginRequiredMixin, CreateView):
     login_url = reverse_lazy('hotel:login')
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff and not request.user.is_superuser:
-            return redirect('hotel:login')
+        if not (request.user.is_staff or request.user.is_superuser):
+            return redirect('hotel:room_list')
         return super().dispatch(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -110,9 +115,12 @@ class RoomCreateView(LoginRequiredMixin, CreateView):
             return redirect(self.success_url)
         else:
             return self.render_to_response(self.get_context_data(form=form))
+    
+    def test_func(self):
+        return is_staff_user(self.request.user)
 
 # UPDATE operation
-class RoomUpdateView(LoginRequiredMixin, UpdateView):
+class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Room
     form_class = RoomForm
     template_name = 'hotel/room_form.html'
@@ -120,8 +128,8 @@ class RoomUpdateView(LoginRequiredMixin, UpdateView):
     login_url = reverse_lazy('hotel:login')
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff and not request.user.is_superuser:
-            return redirect('hotel:login')
+        if not (request.user.is_staff or request.user.is_superuser):
+            return redirect('hotel:room_list')
         return super().dispatch(request, *args, **kwargs)
     
     def get_success_url(self):
@@ -157,9 +165,12 @@ class RoomUpdateView(LoginRequiredMixin, UpdateView):
             return redirect(self.get_success_url())
         else:
             return self.render_to_response(self.get_context_data(form=form))
+    
+    def test_func(self):
+        return is_staff_user(self.request.user)
 
 # DELETE operation
-class RoomDeleteView(LoginRequiredMixin, DeleteView):
+class RoomDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Room
     template_name = 'hotel/room_confirm_delete.html'
     success_url = reverse_lazy('hotel:room_list')
@@ -167,9 +178,12 @@ class RoomDeleteView(LoginRequiredMixin, DeleteView):
     login_url = reverse_lazy('hotel:login')
     
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff and not request.user.is_superuser:
-            return redirect('hotel:login')
+        if not (request.user.is_staff or request.user.is_superuser):
+            return redirect('hotel:room_list')
         return super().dispatch(request, *args, **kwargs)
+    
+    def test_func(self):
+        return is_staff_user(self.request.user)
 
 # Initialize formset for room images
 RoomImageFormSet = inlineformset_factory(
@@ -180,6 +194,46 @@ RoomImageFormSet = inlineformset_factory(
     can_delete=True
 )
 
+# Add this helper function
+def is_staff_user(user):
+    return user.is_authenticated and (user.is_staff or user.is_superuser)
+
+# Add staff dashboard view
+@login_required
+@user_passes_test(is_staff_user)
+def staff_dashboard(request):
+    """Dashboard for staff members to view all reservations and clients"""
+    recent_reservations = Reservation.objects.all().order_by('-created_at')[:10]
+    all_clients = Client.objects.all().order_by('last_name', 'first_name')
+    
+    context = {
+        'recent_reservations': recent_reservations,
+        'clients': all_clients,
+        'total_reservations': Reservation.objects.count(),
+        'total_clients': Client.objects.count(),
+    }
+    
+    return render(request, 'hotel/staff/dashboard.html', context)
+
+# Add client dashboard view
+@login_required
+def client_dashboard(request):
+    """Dashboard for clients to view their reservations"""
+    try:
+        client = request.user.client
+        reservations = client.reservations.all().order_by('-created_at')
+        
+        context = {
+            'client': client,
+            'reservations': reservations,
+        }
+        
+        return render(request, 'hotel/client/dashboard.html', context)
+    except:
+        # Handle case where user has no associated client profile
+        messages.error(request, "Your account is not properly set up. Please contact support.")
+        return redirect('hotel:home')
+
 class RegisterView(CreateView):
     form_class = UserRegisterForm
     template_name = 'hotel/auth/register.html'
@@ -187,6 +241,7 @@ class RegisterView(CreateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
+        messages.success(self.request, 'Your account has been created! You can now log in.')
         return response
 
 class CustomLoginView(LoginView):
@@ -222,3 +277,78 @@ def profile_view(request):
     }
     
     return render(request, 'hotel/auth/profile.html', context)
+
+# Add booking functionality
+class BookingForm(forms.Form):
+    check_in_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    check_out_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    special_requests = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=False)
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        check_in = cleaned_data.get('check_in_date')
+        check_out = cleaned_data.get('check_out_date')
+        
+        if check_in and check_out:
+            if check_in < date.today():
+                raise forms.ValidationError("Check-in date cannot be in the past")
+            
+            if check_out <= check_in:
+                raise forms.ValidationError("Check-out date must be after check-in date")
+                
+        return cleaned_data
+
+@login_required
+def book_room(request, room_id):
+    """Allow a client to book a room"""
+    room = get_object_or_404(Room, id=room_id)
+    
+    # Check if room is available
+    if room.status != 'available':
+        messages.error(request, "This room is not available for booking.")
+        return redirect('hotel:room_detail', pk=room_id)
+    
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            try:
+                client = request.user.client
+                check_in_date = form.cleaned_data['check_in_date']
+                check_out_date = form.cleaned_data['check_out_date']
+                special_requests = form.cleaned_data['special_requests']
+                
+                # Calculate total price
+                days = (check_out_date - check_in_date).days
+                total_price = room.category.base_price * days
+                
+                # Create reservation
+                reservation = Reservation.objects.create(
+                    client=client,
+                    room=room,
+                    check_in_date=check_in_date,
+                    check_out_date=check_out_date,
+                    status='confirmed',
+                    total_price=total_price,
+                    special_requests=special_requests
+                )
+                
+                # Update room status
+                room.status = 'reserved'
+                room.save()
+                
+                messages.success(request, f"Room {room.room_number} booked successfully!")
+                return redirect('hotel:client_dashboard')
+                
+            except Exception as e:
+                messages.error(request, f"Error booking room: {str(e)}")
+    else:
+        # Default check-in to today and check-out to tomorrow
+        form = BookingForm(initial={
+            'check_in_date': date.today(),
+            'check_out_date': date.today() + timedelta(days=1)
+        })
+    
+    return render(request, 'hotel/client/book_room.html', {
+        'form': form,
+        'room': room
+    })

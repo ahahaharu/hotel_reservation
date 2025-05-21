@@ -10,6 +10,7 @@
         <h1>LuxStay Hotel</h1>
         <nav>
             <ul>
+                <!-- Common navigation items -->
                 <li><a href="{% url 'hotel:home' %}">Home</a></li>
                 <li><a href="{% url 'hotel:about' %}">About</a></li>
                 <li><a href="{% url 'hotel:news' %}">News</a></li>
@@ -21,11 +22,18 @@
                 <li><a href="{% url 'hotel:promo_codes' %}">Promo Codes</a></li>
                 <li><a href="{% url 'hotel:room_list' %}">Rooms</a></li>
                 
-                <!-- Add authentication links -->
+                <!-- Authentication and role-specific links -->
                 {% if user.is_authenticated %}
+                    {% if user.is_staff or user.is_superuser %}
+                        <li><a href="{% url 'hotel:staff_dashboard' %}">Staff Dashboard</a></li>
+                        <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
+                    {% else %}
+                        <li><a href="{% url 'hotel:client_dashboard' %}">My Dashboard</a></li>
+                    {% endif %}
                     <li><a href="{% url 'hotel:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'hotel:login' %}">Login</a></li>
+                    <li><a href="{% url 'hotel:register' %}">Register</a></li>
                 {% endif %}
             </ul>
         </nav>

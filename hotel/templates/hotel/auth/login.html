@@ -5,7 +5,7 @@
 {% block content %}
     <h2>Login to Your Account</h2>
     
-    <form method="post">
+    <form method="post" action="{% url 'hotel:login' %}">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Login</button>
