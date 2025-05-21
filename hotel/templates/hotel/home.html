@@ -1,0 +1,17 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Home - LuxStay Hotel{% endblock %}
+
+{% block content %}
+    <h2>Welcome to LuxStay Hotel</h2>
+    
+    {% if latest_article %}
+        <div>
+            <h3>Latest News: {{ latest_article.title }}</h3>
+            <p>{{ latest_article.summary }}</p>
+            <p>Published on: {{ latest_article.published_date|date:"F d, Y" }}</p>
+        </div>
+    {% else %}
+        <p>No recent news available.</p>
+    {% endif %}
+{% endblock %}
