@@ -27,11 +27,16 @@ class ServiceBookingInline(admin.TabularInline):
     fields = ('booking_date', 'total_price', 'notes')
     readonly_fields = ('booking_date',)
 
+# Update the ClientAdmin class
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'phone')
-    search_fields = ('first_name', 'last_name', 'email')
+    list_display = ('first_name', 'last_name', 'email', 'formatted_phone')
+    search_fields = ('first_name', 'last_name', 'email', 'phone')
     inlines = [ReservationInline, ReviewInline]
+    
+    def formatted_phone(self, obj):
+        return obj.phone
+    formatted_phone.short_description = 'Phone Number'
 
 @admin.register(RoomCategory)
 class RoomCategoryAdmin(admin.ModelAdmin):
