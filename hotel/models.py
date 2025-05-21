@@ -255,3 +255,12 @@ class ServiceBooking(models.Model):
     
     def __str__(self):
         return f"Service booking for {self.reservation}"
+
+class ChartImage(models.Model):
+    """Model for storing chart images"""
+    title = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='charts/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.title

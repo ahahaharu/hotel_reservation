@@ -14,13 +14,16 @@ from collections import Counter
 from statistics import median, mode
 from django.db.models.functions import TruncMonth
 import requests
-import json
 from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
     PromoCode, Room, RoomCategory, RoomImage, Reservation, Client, Service
 )
 from .forms import RoomForm, RoomImageForm, RoomFilterForm
 from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
+import matplotlib.pyplot as plt
+from io import BytesIO
+from django.core.files.base import ContentFile
+from .models import ChartImage
 
 def home(request):
     latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
@@ -531,3 +534,41 @@ def statistics_view(request):
     }
     
     return render(request, 'hotel/statistics.html', context)
+
+@login_required
+@user_passes_test(is_staff_user)
+def room_booking_distribution_chart(request):
+    """Generate a bar chart for room bookings by category and save to media directory."""
+    # Get data for room bookings by category
+    categories = RoomCategory.objects.annotate(
+        booking_count=Count('rooms__reservations')
+    ).order_by('-booking_count')
+
+    # Prepare data for the chart
+    category_names = [category.name for category in categories]
+    booking_counts = [category.booking_count for category in categories]
+
+    # Create the bar chart
+    plt.figure(figsize=(10, 6))
+    plt.bar(category_names, booking_counts, color='skyblue')
+    plt.title('Room Bookings by Category')
+    plt.xlabel('Room Category')
+    plt.ylabel('Number of Bookings')
+    plt.xticks(rotation=45, ha='right')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close()      
+
+    filename = f'room_bookings_{datetime.now().strftime("%Y%m%d_%H%M%S")}.png'
+    
+    # Create or get a ChartImage instance
+    chart_image = ChartImage(title='Room Booking Distribution')
+    
+    # Save the image to the model's ImageField
+    chart_image.image.save(filename, ContentFile(buffer.getvalue()), save=True)
+    
+    # Pass the image URL to the template
+    return render(request, 'hotel/visualizations/room_booking_distribution.html', {
+        'chart_image': chart_image
+    })

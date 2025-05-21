@@ -74,4 +74,10 @@
         <h3>Analytics</h3>
         <p><a href="{% url 'hotel:statistics' %}">View Detailed Hotel Statistics</a></p>
     </div>
+    <div>
+        <h3>Visualizations</h3>
+        <ul>
+            <li><a href="{% url 'hotel:room_booking_distribution_chart' %}">Room Booking Distribution</a></li>
+        </ul>
+    </div>
 {% endblock %}

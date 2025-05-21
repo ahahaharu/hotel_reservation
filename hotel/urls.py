@@ -36,4 +36,5 @@ urlpatterns = [
     # Services URL
     path('services/', views.services, name='services'),
     path('statistics/', views.statistics_view, name='statistics'),
+    path('visualizations/room-booking-distribution/', views.room_booking_distribution_chart, name='room_booking_distribution_chart'),
 ]
