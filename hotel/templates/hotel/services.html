@@ -1,0 +1,25 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Hotel Services - LuxStay Hotel{% endblock %}
+
+{% block content %}
+    <h2>Our Services</h2>
+    
+    {% if services %}
+        <div class="services-list">
+            <ul>
+                {% for service in services %}
+                    <li>
+                        <h3>{{ service.name }}</h3>
+                        <p>{{ service.description }}</p>
+                        {% if service.price %}
+                            <p>Price: ${{ service.price }}</p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>No services are currently available.</p>
+    {% endif %}
+{% endblock %}

@@ -10,12 +10,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django import forms
 from datetime import date, timedelta
+from django.db.models import Min, Max
 
 from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
-    PromoCode, Room, RoomCategory, RoomImage, Reservation, Client
+    PromoCode, Room, RoomCategory, RoomImage, Reservation, Client, Service
 )
-from .forms import RoomForm, RoomImageForm
+from .forms import RoomForm, RoomImageForm, RoomFilterForm
 from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
 
 def home(request):
@@ -54,16 +55,53 @@ def promo_codes(request):
     expired_codes = PromoCode.objects.filter(is_active=False).order_by('-valid_to')
     return render(request, 'hotel/promo_codes.html', {'active_codes': active_codes, 'expired_codes': expired_codes})
 
+def services(request):
+    """View for displaying available hotel services"""
+    available_services = Service.objects.filter(is_available=True)
+    return render(request, 'hotel/services.html', {
+        'services': available_services
+    })
+
 class RoomListView(ListView):
     model = Room
     template_name = 'hotel/room_list.html'
     context_object_name = 'rooms'
-    ordering = ['room_number']
+    
+    def get_queryset(self):
+        queryset = Room.objects.all()
+        form = RoomFilterForm(self.request.GET)
+        
+        if form.is_valid():
+            # Filter by category if provided
+            if form.cleaned_data.get('category'):
+                queryset = queryset.filter(category=form.cleaned_data['category'])
+            
+            # Filter by minimum price if provided
+            if form.cleaned_data.get('min_price'):
+                queryset = queryset.filter(category__base_price__gte=form.cleaned_data['min_price'])
+            
+            # Filter by maximum price if provided
+            if form.cleaned_data.get('max_price'):
+                queryset = queryset.filter(category__base_price__lte=form.cleaned_data['max_price'])
+            
+            # Filter by capacity if provided
+            if form.cleaned_data.get('capacity'):
+                queryset = queryset.filter(capacity__gte=form.cleaned_data['capacity'])
+            
+            # Filter by availability if checkbox is checked
+            if form.cleaned_data.get('available_only'):
+                queryset = queryset.filter(status='available')
+        
+        return queryset.order_by('room_number')
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['categories'] = RoomCategory.objects.all()
         context['is_staff'] = self.request.user.is_staff or self.request.user.is_superuser
+        context['filter_form'] = RoomFilterForm(self.request.GET)
+        # Add min and max prices for the range filter
+        context['min_room_price'] = RoomCategory.objects.aggregate(Min('base_price'))['base_price__min'] or 0
+        context['max_room_price'] = RoomCategory.objects.aggregate(Max('base_price'))['base_price__max'] or 1000
         return context
 
 class RoomDetailView(DetailView):

@@ -31,4 +31,7 @@ urlpatterns = [
 
     # Booking URL
     path('rooms/<int:room_id>/book/', views.book_room, name='book_room'),
+
+    # Services URL
+    path('services/', views.services, name='services'),
 ]
