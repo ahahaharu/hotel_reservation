@@ -154,3 +154,33 @@ def validate_and_format_phone(value):
         formatted_number = f"+{digits_only[0:3]} ({digits_only[3:5]}) {digits_only[5:8]}-{digits_only[8:10]}-{digits_only[10:12]}"
     
     return formatted_number
+
+class UserProfileForm(forms.ModelForm):
+    """Form for updating user profile (Client model)"""
+    phone = forms.CharField(
+        max_length=20, 
+        required=True,
+        help_text="Format: +375 (29) XXX-XX-XX or (29) XXX-XX-XX"
+    )
+    date_of_birth = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'}),
+        required=True,
+        help_text="Must be at least 18 years old"
+    )
+    
+    class Meta:
+        model = Client
+        fields = ['first_name', 'last_name', 'phone', 'address', 'date_of_birth']
+    
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        return validate_and_format_phone(phone)
+    
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get('date_of_birth')
+        if dob:
+            today = date.today()
+            age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+            if age < 18:
+                raise ValidationError("You must be at least 18 years old.")
+        return dob

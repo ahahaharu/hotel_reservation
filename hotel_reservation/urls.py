@@ -22,7 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('hotel.urls')),  # Include the hotel app's URLs
+    path('', include('hotel.urls')),
 ]
 
 if settings.DEBUG:

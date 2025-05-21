@@ -26,14 +26,9 @@ urlpatterns = [
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.logout_view, name='logout'),
 
-    # Dashboard URLs
     path('dashboard/', views.client_dashboard, name='client_dashboard'),
     path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
-
-    # Booking URL
     path('rooms/<int:room_id>/book/', views.book_room, name='book_room'),
-
-    # Services URL
     path('services/', views.services, name='services'),
     path('statistics/', views.statistics_view, name='statistics'),
     path('visualizations/room-booking-distribution/', views.room_booking_distribution_chart, name='room_booking_distribution_chart'),
