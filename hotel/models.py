@@ -19,6 +19,7 @@ class RoomCategory(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
     base_price = models.DecimalField(max_digits=10, decimal_places=2)
+    amenities = models.ManyToManyField('Amenity', related_name='room_categories', blank=True)
     
     class Meta:
         verbose_name_plural = "Room Categories"
@@ -90,6 +91,7 @@ class Article(models.Model):
     image = models.ImageField(upload_to='article_images/', blank=True, null=True)
     published_date = models.DateTimeField(default=timezone.now)
     is_published = models.BooleanField(default=False)
+    tags = models.ManyToManyField('Tag', related_name='articles', blank=True)
     
     class Meta:
         ordering = ['-published_date']
@@ -198,3 +200,45 @@ class PromoCode(models.Model):
     def is_valid(self):
         today = timezone.now().date()
         return self.is_active and self.valid_from <= today <= self.valid_to
+
+class Amenity(models.Model):
+    """Model for hotel amenities/facilities"""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    icon = models.CharField(max_length=50, blank=True, null=True, help_text="Font awesome icon name")
+    
+    class Meta:
+        verbose_name_plural = "Amenities"
+    
+    def __str__(self):
+        return self.name
+
+class Service(models.Model):
+    """Model for hotel services"""
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    is_available = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.name
+
+class Tag(models.Model):
+    """Model for article tags"""
+    name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField(max_length=50, unique=True)
+    
+    def __str__(self):
+        return self.name
+
+class ServiceBooking(models.Model):
+    """Model for booking additional services"""
+    reservation = models.OneToOneField(Reservation, on_delete=models.CASCADE, related_name='service_booking')
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='service_bookings')
+    services = models.ManyToManyField(Service, related_name='bookings')
+    booking_date = models.DateTimeField(auto_now_add=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Service booking for {self.reservation}"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Article, Client, RoomCategory, Room, RoomImage, Reservation, CompanyInfo, FAQ, Staff, Vacancy, Review, PromoCode
+from .models import Article, Client, RoomCategory, Room, RoomImage, Reservation, CompanyInfo, FAQ, Staff, Vacancy, Review, PromoCode, Amenity, Service, Tag, ServiceBooking
 
 @admin.register(Client)
 class ClientAdmin(admin.ModelAdmin):
@@ -9,6 +9,7 @@ class ClientAdmin(admin.ModelAdmin):
 @admin.register(RoomCategory)
 class RoomCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'base_price')
+    filter_horizontal = ('amenities',)  # Makes it easier to manage many-to-many
 
 class RoomImageInline(admin.TabularInline):
     model = RoomImage
@@ -29,10 +30,11 @@ class ReservationAdmin(admin.ModelAdmin):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'published_date', 'is_published')
-    list_filter = ('is_published', 'published_date')
+    list_filter = ('is_published', 'published_date', 'tags')
     search_fields = ('title', 'content')
     prepopulated_fields = {'slug': ('title',)}
     date_hierarchy = 'published_date'
+    filter_horizontal = ('tags',)  # Makes it easier to manage many-to-many
 
 @admin.register(CompanyInfo)
 class CompanyInfoAdmin(admin.ModelAdmin):
@@ -67,3 +69,24 @@ class PromoCodeAdmin(admin.ModelAdmin):
     list_display = ('code', 'discount_percent', 'discount_amount', 'valid_from', 'valid_to', 'is_active')
     list_filter = ('is_active', 'valid_from', 'valid_to')
     search_fields = ('code', 'description')
+
+@admin.register(Amenity)
+class AmenityAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name',)
+
+@admin.register(Service)
+class ServiceAdmin(admin.ModelAdmin):
+    list_display = ('name', 'price', 'is_available')
+    list_filter = ('is_available',)
+    search_fields = ('name', 'description')
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+
+@admin.register(ServiceBooking)
+class ServiceBookingAdmin(admin.ModelAdmin):
+    list_display = ('reservation', 'client', 'booking_date', 'total_price')
+    filter_horizontal = ('services',)  # Makes it easier to manage many-to-many
