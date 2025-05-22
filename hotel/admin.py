@@ -45,13 +45,12 @@ class ClientAdmin(admin.ModelAdmin):
 @admin.register(RoomCategory)
 class RoomCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'base_price')
-    filter_horizontal = ('amenities',)  # Makes it easier to manage many-to-many
+    filter_horizontal = ('amenities',)  
 
 class RoomImageInline(admin.TabularInline):
     model = RoomImage
     extra = 1
 
-# Update Room admin to include fieldsets for better organization
 @admin.register(Room)
 class RoomAdmin(admin.ModelAdmin):
     list_display = ('room_number', 'category', 'status', 'capacity')
@@ -73,8 +72,8 @@ class RoomAdmin(admin.ModelAdmin):
 
 @admin.register(Reservation)
 class ReservationAdmin(admin.ModelAdmin):
-    list_display = ('client', 'room', 'check_in_date', 'check_out_date', 'status')
-    list_filter = ('status', 'check_in_date', 'client')
+    list_display = ('client', 'room', 'check_in_date', 'check_out_date', 'status', 'has_children')
+    list_filter = ('status', 'check_in_date', 'has_children', 'client')
     date_hierarchy = 'check_in_date'
     inlines = [ServiceBookingInline]
     readonly_fields = ('created_at', 'updated_at')

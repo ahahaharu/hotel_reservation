@@ -27,7 +27,6 @@ class UserRegisterForm(UserCreationForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'date_of_birth', 'password1', 'password2']
     
     def clean_phone(self):
-        # Get the phone number and clean it
         phone = self.cleaned_data.get('phone')
         return validate_and_format_phone(phone)
     

@@ -17,7 +17,6 @@ class RoomImageForm(forms.ModelForm):
         fields = ['image', 'caption']
 
 class RoomFilterForm(forms.Form):
-    # Existing filters
     category = forms.ModelChoiceField(
         queryset=RoomCategory.objects.all(),
         required=False,

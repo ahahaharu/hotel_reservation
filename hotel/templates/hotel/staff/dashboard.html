@@ -14,30 +14,33 @@
     <div>
         <h3>Recent Reservations</h3>
         {% if recent_reservations %}
-            <table>
-                <thead>
+        <table>
+            <thead>
+                <tr>
+                    <th>Client</th>
+                    <th>Room</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Status</th>
+                    <th>Children</th>
+                    <th>Total Price</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in recent_reservations %}
                     <tr>
-                        <th>Client</th>
-                        <th>Room</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                        <th>Status</th>
-                        <th>Total Price</th>
+                        <td>{{ reservation.client.first_name }} {{ reservation.client.last_name }}</td>
+                        <td>{{ reservation.room.room_number }}</td>
+                        <td>{{ reservation.check_in_date }}</td>
+                        <td>{{ reservation.check_out_date }}</td>
+                        <td>{{ reservation.get_status_display }}</td>
+                        <td>{% if reservation.has_children %}Да{% else %}Нет{% endif %}</td>
+                        <td>${{ reservation.total_price }}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {% for reservation in recent_reservations %}
-                        <tr>
-                            <td>{{ reservation.client.first_name }} {{ reservation.client.last_name }}</td>
-                            <td>{{ reservation.room.room_number }}</td>
-                            <td>{{ reservation.check_in_date }}</td>
-                            <td>{{ reservation.check_out_date }}</td>
-                            <td>{{ reservation.get_status_display }}</td>
-                            <td>${{ reservation.total_price }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                {% endfor %}
+            </tbody>
+        </table>
         {% else %}
             <p>No reservations yet.</p>
         {% endif %}

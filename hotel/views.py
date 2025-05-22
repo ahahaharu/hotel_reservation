@@ -29,15 +29,13 @@ from django.db.models import Q
 def home(request):
     latest_article = Article.objects.filter(is_published=True).order_by('-published_date').first()
     
-    # Get the daily quote
     daily_quote = get_daily_quote()
     
-    # Get currency exchange rates
     exchange_rates = get_exchange_rates()
     
     context = {
         'latest_article': latest_article,
-        'daily_quote': daily_quote,  # Add the daily quote to the context
+        'daily_quote': daily_quote,  
         'exchange_rates': exchange_rates,
     }
     
@@ -92,7 +90,6 @@ class RoomListView(ListView):
         form = RoomFilterForm(self.request.GET)
         
         if form.is_valid():
-            # Existing filters
             if form.cleaned_data.get('category'):
                 queryset = queryset.filter(category=form.cleaned_data['category'])
             
@@ -108,7 +105,6 @@ class RoomListView(ListView):
             if form.cleaned_data.get('available_only'):
                 queryset = queryset.filter(status='available')
             
-            # Add search functionality
             search_query = form.cleaned_data.get('search')
             if search_query:
                 queryset = queryset.filter(
@@ -117,7 +113,6 @@ class RoomListView(ListView):
                     Q(category__name__icontains=search_query)
                 )
             
-            # Add sorting
             sort_by = form.cleaned_data.get('sort_by')
             if sort_by:
                 queryset = queryset.order_by(sort_by)
@@ -145,7 +140,6 @@ class RoomDetailView(DetailView):
         context['is_staff'] = self.request.user.is_staff or self.request.user.is_superuser
         return context
 
-# CREATE operation
 class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Room
     form_class = RoomForm
@@ -162,7 +156,6 @@ class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Add New Room'
         
-        # Add formset for room images
         if self.request.POST:
             context['image_formset'] = RoomImageFormSet(self.request.POST, self.request.FILES)
         else:
@@ -177,7 +170,6 @@ class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         if image_formset.is_valid():
             self.object = form.save()
             
-            # Save the formset with the room instance
             image_formset.instance = self.object
             image_formset.save()
             
@@ -188,7 +180,6 @@ class RoomCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def test_func(self):
         return is_staff_user(self.request.user)
 
-# UPDATE operation
 class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Room
     form_class = RoomForm
@@ -208,7 +199,6 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Edit Room'
         
-        # Add formset for room images
         if self.request.POST:
             context['image_formset'] = RoomImageFormSet(
                 self.request.POST, 
@@ -227,7 +217,6 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if image_formset.is_valid():
             self.object = form.save()
             
-            # Save the formset with the room instance
             image_formset.instance = self.object
             image_formset.save()
             
@@ -238,7 +227,6 @@ class RoomUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         return is_staff_user(self.request.user)
 
-# DELETE operation
 class RoomDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Room
     template_name = 'hotel/room_confirm_delete.html'
@@ -254,7 +242,6 @@ class RoomDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def test_func(self):
         return is_staff_user(self.request.user)
 
-# Initialize formset for room images
 RoomImageFormSet = inlineformset_factory(
     Room, 
     RoomImage, 
@@ -263,11 +250,9 @@ RoomImageFormSet = inlineformset_factory(
     can_delete=True
 )
 
-# Add this helper function
 def is_staff_user(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
 
-# Add staff dashboard view
 @login_required
 @user_passes_test(is_staff_user)
 def staff_dashboard(request):
@@ -284,7 +269,6 @@ def staff_dashboard(request):
     
     return render(request, 'hotel/staff/dashboard.html', context)
 
-# Add client dashboard view
 @login_required
 def client_dashboard(request):
     """Dashboard for clients to view their reservations"""
@@ -299,7 +283,6 @@ def client_dashboard(request):
         
         return render(request, 'hotel/client/dashboard.html', context)
     except:
-        # Handle case where user has no associated client profile
         messages.error(request, "Your account is not properly set up. Please contact support.")
         return redirect('hotel:home')
 
@@ -351,6 +334,11 @@ def profile_view(request):
 class BookingForm(forms.Form):
     check_in_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     check_out_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    has_children = forms.BooleanField(
+        required=False, 
+        label="Бронирование с детьми?",
+        help_text="Отметьте, если с вами будут дети"
+    )
     special_requests = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=False)
     
     def clean(self):
@@ -372,7 +360,6 @@ def book_room(request, room_id):
     """Allow a client to book a room"""
     room = get_object_or_404(Room, id=room_id)
     
-    # Check if room is available
     if room.status != 'available':
         messages.error(request, "This room is not available for booking.")
         return redirect('hotel:room_detail', pk=room_id)
@@ -385,12 +372,11 @@ def book_room(request, room_id):
                 check_in_date = form.cleaned_data['check_in_date']
                 check_out_date = form.cleaned_data['check_out_date']
                 special_requests = form.cleaned_data['special_requests']
+                has_children = form.cleaned_data['has_children']
                 
-                # Calculate total price
                 days = (check_out_date - check_in_date).days
                 total_price = room.category.base_price * days
                 
-                # Create reservation
                 reservation = Reservation.objects.create(
                     client=client,
                     room=room,
@@ -398,10 +384,11 @@ def book_room(request, room_id):
                     check_out_date=check_out_date,
                     status='confirmed',
                     total_price=total_price,
-                    special_requests=special_requests
+                    special_requests=special_requests,
+                    has_children=has_children 
                 )
                 
-                # Update room status
+                
                 room.status = 'reserved'
                 room.save()
                 
@@ -411,7 +398,6 @@ def book_room(request, room_id):
             except Exception as e:
                 messages.error(request, f"Error booking room: {str(e)}")
     else:
-        # Default check-in to today and check-out to tomorrow
         form = BookingForm(initial={
             'check_in_date': date.today(),
             'check_out_date': date.today() + timedelta(days=1)
@@ -445,7 +431,7 @@ def get_daily_quote():
 
 def get_exchange_rates(base_currency="USD"):
     """Get current exchange rates"""
-    api_key = "0da4b4143b44e87f2cf45a11"  # Replace with your ExchangeRate API key
+    api_key = "0da4b4143b44e87f2cf45a11"  
     url = f"https://v6.exchangerate-api.com/v6/{api_key}/latest/{base_currency}"
     
     try:
@@ -454,7 +440,6 @@ def get_exchange_rates(base_currency="USD"):
         
         
         if response.status_code == 200 and data['result'] == 'success':
-            # Extract just a few important currencies
             rates = {
                 'EUR': data['conversion_rates'].get('EUR'),
                 'GBP': data['conversion_rates'].get('GBP'),
@@ -474,7 +459,6 @@ def get_exchange_rates(base_currency="USD"):
 def statistics_view(request):
     """View for displaying hotel statistics and analytics"""
     
-    # 1. Rooms by category (in alphabetical order)
     rooms_by_category = Room.objects.values('category__name').annotate(
         count=Count('id')
     ).order_by('category__name')
