@@ -4,7 +4,7 @@
 
 {% block content %}
     <h2>Welcome to Hotel</h2>
-    
+    {% if user.is_authenticated %}
     {% if daily_quote %}
         <div class="api-section">
             <h3>Quote of the Day</h3>
@@ -25,6 +25,8 @@
             <p><small>Updated at: {{ exchange_rates.timestamp }}</small></p>
         </div>
     {% endif %}
+    {% endif %}
+
     
     {% if latest_article %}
         <div>

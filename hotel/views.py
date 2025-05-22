@@ -330,14 +330,13 @@ def profile_view(request):
     
     return render(request, 'hotel/auth/profile.html', context)
 
-# Add booking functionality
 class BookingForm(forms.Form):
     check_in_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     check_out_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
     has_children = forms.BooleanField(
         required=False, 
-        label="Бронирование с детьми?",
-        help_text="Отметьте, если с вами будут дети"
+        label="Booking with children?",
+        help_text="Please check if you will be bringing children with you."
     )
     special_requests = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=False)
     
@@ -554,7 +553,8 @@ def room_booking_distribution_chart(request):
         'chart_image': chart_image
     })
 
-
+# Remove this decorator
+# @login_required
 def add_review(request):
     """Allow registered users to submit reviews"""
     if request.method == 'POST':
