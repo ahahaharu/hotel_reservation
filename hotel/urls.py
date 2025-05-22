@@ -13,7 +13,7 @@ urlpatterns = [
     path('contacts/', views.contacts, name='contacts'),
     path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
     path('vacancies/', views.vacancies, name='vacancies'),
-    path('reviews/', views.reviews, name='reviews'),
+    path('reviews/', views.add_review, name='reviews'),
     path('promo-codes/', views.promo_codes, name='promo_codes'),
 
     re_path(r'^rooms/$', views.RoomListView.as_view(), name='room_list'),

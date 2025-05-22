@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Room, RoomCategory, RoomImage, Client
+from .models import Room, RoomCategory, RoomImage, Client, Review
 
 class RoomForm(forms.ModelForm):
     class Meta:
@@ -64,3 +64,12 @@ class RoomFilterForm(forms.Form):
         initial='room_number',
         label="Sort by"
     )
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['rating', 'text']
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Tell us about your experience...'}),
+            'rating': forms.Select(attrs={'class': 'form-control'})
+        }

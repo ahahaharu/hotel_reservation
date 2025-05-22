@@ -18,7 +18,7 @@ from .models import (
     Article, CompanyInfo, FAQ, Staff, Vacancy, Review, 
     PromoCode, Room, RoomCategory, RoomImage, Reservation, Client, Service
 )
-from .forms import RoomForm, RoomImageForm, RoomFilterForm
+from .forms import RoomForm, RoomImageForm, RoomFilterForm, ReviewForm
 from .auth_forms import UserRegisterForm, UserLoginForm, UserProfileForm
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -552,4 +552,32 @@ def room_booking_distribution_chart(request):
     
     return render(request, 'hotel/visualizations/room_booking_distribution.html', {
         'chart_image': chart_image
+    })
+
+
+def add_review(request):
+    """Allow registered users to submit reviews"""
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            try:
+                client = request.user.client
+                review.client = client
+                review.is_published = False 
+                review.save()
+                messages.success(request, "Thanks for the feedback")
+                return redirect('hotel:reviews')
+            except:
+                messages.error(request, "Your account is not set up as a client. Please contact support.")
+        else:
+            messages.error(request, "Please correct the errors in the form.")
+    else:
+        form = ReviewForm()
+    
+    published_reviews = Review.objects.filter(is_published=True).order_by('-date_posted')
+    
+    return render(request, 'hotel/reviews.html', {
+        'form': form,
+        'reviews': published_reviews
     })
