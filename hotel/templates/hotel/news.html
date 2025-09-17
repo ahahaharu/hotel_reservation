@@ -1,0 +1,21 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}News - Hotel{% endblock %}
+
+{% block content %}
+    <h2>News & Updates</h2>
+    
+    {% if articles %}
+        <ul>
+            {% for article in articles %}
+                <li>
+                    <h3>{{ article.title }}</h3>
+                    <p>{{ article.summary }}</p>
+                    <p>Published on: {{ article.published_date|date:"F d, Y" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No news articles available.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "hotel/base.html" %} {% block title %}Заказ успешно оплачен{% endblock %} {% block content %}
+<section class="order-success">
+  <h2>✅ Заказ успешно оплачен!</h2>
+
+  <div class="order-details">
+    <h3>Детали заказа #{{ order.id }}</h3>
+    <p><strong>Email:</strong> {{ order.email }}</p>
+    <p><strong>Сумма:</strong> ${{ order.total_amount }}</p>
+    <p><strong>Дата заказа:</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+    <p><strong>Статус:</strong> {{ order.get_status_display }}</p>
+
+    <h4>Заказанные услуги:</h4>
+    <ul>
+      {% for item in order.items.all %}
+      <li>
+        {{ item.service.name }} × {{ item.quantity }} = ${{ item.total_price }}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <p>Спасибо за ваш заказ! Мы свяжемся с вами в ближайшее время.</p>
+
+  <div class="success-actions">
+    <a href="{% url 'hotel:home' %}" class="btn btn-primary"> На главную </a>
+    <a href="{% url 'hotel:services' %}" class="btn btn-secondary">
+      Другие услуги
+    </a>
+  </div>
+</section>
+{% endblock %}

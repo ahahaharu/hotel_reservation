@@ -1,0 +1,102 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Hotel Statistics - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Hotel Performance Analytics</h2>
+    
+    <div class="stats-section">
+        <h3>Overview</h3>
+        <p>Total Revenue: ${{ total_revenue|floatformat:2 }}</p>
+        <p>Current Occupancy Rate: {{ occupancy_rate|floatformat:1 }}%</p>
+    </div>
+    
+    <div class="stats-section">
+        <h3>Room Categories (Alphabetical)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Number of Rooms</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in rooms_by_category %}
+                    <tr>
+                        <td>{{ category.category__name }}</td>
+                        <td>{{ category.count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="stats-section">
+        <h3>Reservation Statistics</h3>
+        <p>Average Booking Amount: ${{ avg_sale|floatformat:2 }}</p>
+        <p>Median Booking Amount: ${{ median_sale|floatformat:2 }}</p>
+        <p>Most Common Booking Amount: ${{ mode_sale|floatformat:2 }}</p>
+        <p>Average Length of Stay: {{ avg_stay|floatformat:1 }} days</p>
+        <p>Median Length of Stay: {{ median_stay }} days</p>
+    </div>
+    
+    <div class="stats-section">
+        <h3>Most Popular Room Categories</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Number of Bookings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in popular_categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.reservation_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="stats-section">
+        <h3>Most Profitable Room Categories</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Total Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category in profitable_categories %}
+                    <tr>
+                        <td>{{ category.name }}</td>
+                        <td>${{ category.revenue|default:0|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="stats-section">
+        <h3>Monthly Revenue Trends</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Revenue</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for month in monthly_revenue %}
+                    <tr>
+                        <td>{{ month.month|date:"F Y" }}</td>
+                        <td>${{ month.revenue|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

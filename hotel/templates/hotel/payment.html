@@ -1,0 +1,78 @@
+{% extends "hotel/base.html" %} {% block title %}Оплата заказа{% endblock %} {% block content %}
+<h2>Оплата заказа</h2>
+
+<section class="payment-summary">
+  <h3>Сумма к оплате: ${{ total_price }}</h3>
+</section>
+
+<form method="post">
+  {% csrf_token %}
+
+  <fieldset>
+    <legend>Данные карты</legend>
+
+    <div class="form-group">
+      <label for="card_number"
+        >Номер карты: <abbr title="обязательно">*</abbr></label
+      >
+      <input
+        type="text"
+        id="card_number"
+        name="card_number"
+        required
+        pattern="\d{16}"
+        title="16 цифр"
+        placeholder="1234567890123456"
+        maxlength="16"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="expiry_date"
+        >Срок действия: <abbr title="обязательно">*</abbr></label
+      >
+      <input
+        type="text"
+        id="expiry_date"
+        name="expiry_date"
+        required
+        pattern="\d{2}/\d{2}"
+        title="MM/YY"
+        placeholder="MM/YY"
+        maxlength="5"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="cvv">CVV: <abbr title="обязательно">*</abbr></label>
+      <input
+        type="password"
+        id="cvv"
+        name="cvv"
+        required
+        pattern="\d{3}"
+        title="3 цифры"
+        placeholder="123"
+        maxlength="3"
+      />
+    </div>
+  </fieldset>
+
+  {% if not user.is_authenticated %}
+  <fieldset>
+    <legend>Контактная информация</legend>
+    <div class="form-group">
+      <label for="email">Email: <abbr title="обязательно">*</abbr></label>
+      <input type="email" id="email" name="email" required />
+    </div>
+  </fieldset>
+  {% endif %}
+
+  <div class="payment-actions">
+    <a href="{% url 'hotel:checkout' %}" class="btn btn-secondary"> ← Назад </a>
+    <button type="submit" class="btn btn-primary">
+      💳 Оплатить ${{ total_price }}
+    </button>
+  </div>
+</form>
+{% endblock %}

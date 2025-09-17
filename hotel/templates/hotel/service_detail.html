@@ -1,0 +1,42 @@
+{% extends "hotel/base.html" %} {% block title %}{{ service.name }} - Услуги{% endblock %} {% block content %}
+<article itemscope itemtype="http://schema.org/Product">
+  <header>
+    <h2 itemprop="name">{{ service.name }}</h2>
+  </header>
+
+  <section>
+    <h3>Описание</h3>
+    <p itemprop="description">{{ service.description }}</p>
+  </section>
+
+  {% if service.price %}
+  <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+    <p>
+      <strong
+        >Цена: $<span itemprop="price">{{ service.price }}</span>
+        <span itemprop="priceCurrency">USD</span></strong
+      >
+    </p>
+  </div>
+  {% endif %}
+
+  <div class="service-actions">
+    <a href="{% url 'hotel:add_to_cart' service.id %}" class="btn btn-primary">
+      🛒 Добавить в корзину
+    </a>
+    <a href="{% url 'hotel:services' %}" class="btn btn-secondary">
+      ← Назад к услугам
+    </a>
+  </div>
+</article>
+
+<aside>
+  <h3>Дополнительная информация</h3>
+  <dl>
+    <dt>Доступность</dt>
+    <dd>
+      {% if service.is_available %}Доступно{% else %}Недоступно{% endif %}
+    </dd>
+  </dl>
+</aside>
+{% endblock %}

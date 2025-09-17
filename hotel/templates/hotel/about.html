@@ -1,0 +1,28 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}About - Hotel{% endblock %}
+
+{% block content %}
+    <h2>About Our Hotel</h2>
+    
+    {% if company_info %}
+        <h3>{{ company_info.name }}</h3>
+        <p>{{ company_info.description }}</p>
+        
+        {% if company_info.foundation_year %}
+            <p>Established: {{ company_info.foundation_year }}</p>
+        {% endif %}
+        
+        {% if company_info.history %}
+            <h3>Our History</h3>
+            <p>{{ company_info.history }}</p>
+        {% endif %}
+        
+        {% if company_info.legal_info %}
+            <h3>Legal Information</h3>
+            <p>{{ company_info.legal_info }}</p>
+        {% endif %}
+    {% else %}
+        <p>Company information not available.</p>
+    {% endif %}
+{% endblock %}

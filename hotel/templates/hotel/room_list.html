@@ -1,0 +1,82 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Room List - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Our Rooms</h2>
+    
+    <div class="filter-container">
+        <h3>Search and Filter Rooms</h3>
+        <form method="get" action="{% url 'hotel:room_list' %}">
+            <div class="form-group">
+                <label for="id_search">Search:</label>
+                {{ filter_form.search }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_sort_by">Sort by:</label>
+                {{ filter_form.sort_by }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_category">Category:</label>
+                {{ filter_form.category }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_min_price">Price Range:</label>
+                {{ filter_form.min_price }} to {{ filter_form.max_price }}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_capacity">Minimum Capacity:</label>
+                {{ filter_form.capacity }}
+            </div>
+            
+            <div class="form-group">
+                {{ filter_form.available_only }}
+                <label for="id_available_only">Show only available rooms</label>
+            </div>
+            
+            <button type="submit">Apply Filters</button>
+            <a href="{% url 'hotel:room_list' %}">Clear All</a>
+        </form>
+    </div>
+    
+    {% if is_staff %}
+    <div>
+        <a href="{% url 'hotel:room_create' %}">Add New Room</a>
+    </div>
+    {% endif %}
+    
+    <div class="results-summary">
+        <p>Showing {{ rooms|length }} result(s)</p>
+    </div>
+    
+    {% if rooms %}
+        <div class="room-list">
+            <h3>Available Rooms</h3>
+            <ul>
+                {% for room in rooms %}
+                    <li>
+                        <h3>Room {{ room.room_number }}</h3>
+                        <p>Category: {{ room.category.name }}</p>
+                        <p>Status: {{ room.get_status_display }}</p>
+                        <p>Capacity: {{ room.capacity }} person(s)</p>
+                        <p>Price per night: ${{ room.category.base_price }}</p>
+                        
+                        <div>
+                            <a href="{% url 'hotel:room_detail' room.pk %}">View Details</a>
+                            {% if is_staff %}
+                            | <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> 
+                            | <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p>No rooms match your search criteria.</p>
+    {% endif %}
+{% endblock %}

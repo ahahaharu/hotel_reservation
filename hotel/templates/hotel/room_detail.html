@@ -1,0 +1,51 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Room {{ room.room_number }} - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Room {{ room.room_number }}</h2>
+    
+    <div>
+        <p>Category: {{ room.category.name }}</p>
+        <p>Status: {{ room.get_status_display }}</p>
+        <p>Capacity: {{ room.capacity }} person(s)</p>
+        <p>Price per night: ${{ room.category.base_price }}</p>
+        
+        {% if room.description %}
+            <h3>Description</h3>
+            <p>{{ room.description }}</p>
+        {% endif %}
+        
+        {% if room.images.all %}
+            <h3>Images</h3>
+            <div>
+                {% for image in room.images.all %}
+                    <div>
+                        <img src="{{ image.image.url }}" alt="{{ image.caption|default:room.room_number }}" style="max-width: 300px;">
+                        {% if image.caption %}
+                            <p>{{ image.caption }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+    
+    <div>
+        {% if user.is_authenticated and not is_staff and room.status == 'available' %}
+            <a href="{% url 'hotel:book_room' room.pk %}">Book This Room</a>
+        {% elif not user.is_authenticated %}
+            <p>Please <a href="{% url 'hotel:login' %}">login</a> to book this room.</p>
+        {% elif room.status != 'available' %}
+            <p>This room is currently not available for booking.</p>
+        {% endif %}
+    </div>
+    
+    <div>
+        <a href="{% url 'hotel:room_list' %}">Back to Room List</a>
+        {% if is_staff %}
+        | <a href="{% url 'hotel:room_update' room.pk %}">Edit</a> 
+        | <a href="{% url 'hotel:room_delete' room.pk %}">Delete</a>
+        {% endif %}
+    </div>
+{% endblock %}

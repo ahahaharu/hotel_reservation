@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Лучший отель для вашего отдыха. Бронируйте номера и услуги онлайн."
+    />
+    <meta
+      name="keywords"
+      content="отель, гостиница, бронирование, отдых, номера, услуги"
+    />
+    <meta name="author" content="Bogdanovich Andrey" />
+
+    <title>{% block title %}LuxStay Hotel{% endblock %}</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.cookie = `user_timezone=${timezone}; path=/; SameSite=Lax`;
+
+        const timezoneElement = document.getElementById('user-timezone');
+        if (timezoneElement) {
+          timezoneElement.textContent = timezone;
+        }
+      });
+    </script>
+
+    <style>
+      .cart-count {
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 12px;
+        margin-left: 5px;
+      }
+      .banner-slider {
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+        margin: 20px 0;
+      }
+      .banner-slider img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+      }
+      .service-card {
+        border: 1px solid #ddd;
+        padding: 15px;
+        border-radius: 5px;
+      }
+      .partners-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .partners-grid img {
+        height: 50px;
+        width: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header itemscope itemtype="http://schema.org/WPHeader">
+      <div style="display: flex; align-items: center">
+        <a href="{% url 'hotel:home' %}" title="На главную">
+          <img
+            src="{% static 'logo.png' %}"
+            alt="Логотип LuxStay Hotel"
+            style="height: 40px; margin-right: 10px"
+            ...
+          />
+        </a>
+        <h1 itemprop="name">LuxStay Hotel</h1>
+      </div>
+
+      <aside
+        class="datetime-info"
+        itemscope
+        itemtype="http://schema.org/DateTime"
+      >
+        <div>
+          <strong>Ваша тайм-зона:</strong>
+          <time id="user-timezone" itemprop="timeZone"
+            >{{ user_timezone|default:"Определение..." }}</time
+          >
+        </div>
+        <div>
+          <strong>Текущая дата (Ваше время):</strong>
+          <time
+            datetime="{{ user_current_date|date:'Y-m-d' }}"
+            itemprop="dateTime"
+            >{{ user_current_date|date:"d/m/Y" }}</time
+          >
+        </div>
+        <div>
+          <strong>Текущая дата (UTC):</strong>
+          <time datetime="{{ utc_current_date|date:'Y-m-d' }}"
+            >{{ utc_current_date|date:"d/m/Y" }}</time
+          >
+        </div>
+        <details>
+          <summary>Календарь</summary>
+          <pre><code>{{ text_calendar|safe }}</code></pre>
+        </details>
+      </aside>
+
+      <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+        <ul>
+          <li>
+            <a href="{% url 'hotel:home' %}" itemprop="url"
+              ><span itemprop="name">Главная</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:about' %}" itemprop="url"
+              ><span itemprop="name">О компании</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:news' %}" itemprop="url"
+              ><span itemprop="name">Новости</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:glossary' %}" itemprop="url"
+              ><span itemprop="name">Словарь</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:contacts' %}" itemprop="url"
+              ><span itemprop="name">Контакты</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:privacy_policy' %}" itemprop="url"
+              ><span itemprop="name">Политика</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:vacancies' %}" itemprop="url"
+              ><span itemprop="name">Вакансии</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:reviews' %}" itemprop="url"
+              ><span itemprop="name">Отзывы</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:promo_codes' %}" itemprop="url"
+              ><span itemprop="name">Промокоды</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:services' %}" itemprop="url"
+              ><span itemprop="name">Наши услуги</span></a
+            >
+          </li>
+          <li>
+            <a href="{% url 'hotel:room_list' %}" itemprop="url"
+              ><span itemprop="name">Номера</span></a
+            >
+          </li>
+
+          <!-- Cart link for all users -->
+          <li>
+            <a href="{% url 'hotel:cart_view' %}" title="Корзина">
+              🛒 Корзина {% comment %} TODO: Add cart items count here when
+              context processor is implemented {% endcomment %}
+            </a>
+          </li>
+
+          {% if user.is_authenticated %} {% if user.is_staff or user.is_superuser %}
+          <li>
+            <a href="{% url 'hotel:staff_dashboard' %}">Панель персонала</a>
+          </li>
+          <li><a href="{% url 'admin:index' %}">Админ-панель</a></li>
+          <li><a href="{% url 'hotel:statistics' %}">Статистика</a></li>
+          {% else %}
+          <li><a href="{% url 'hotel:client_dashboard' %}">Мой кабинет</a></li>
+          {% endif %}
+          <li><a href="{% url 'hotel:logout' %}">Выйти</a></li>
+          {% else %}
+          <li><a href="{% url 'hotel:login' %}">Войти</a></li>
+          <li><a href="{% url 'hotel:register' %}">Регистрация</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <main itemscope itemtype="http://schema.org/WebPageElement">
+      {% if messages %}
+      <section class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </section>
+      {% endif %} {% block content %} {% endblock %}
+    </main>
+
+    <footer itemscope itemtype="http://schema.org/WPFooter">
+      <p>
+        &copy; {% now "Y" %} LuxStay Hotel.
+        <mark>Bogdanovich Andrey 353504</mark>
+      </p>
+      <p>
+        <a href="/static/price-list.pdf" download title="Скачать прайс-лист">
+          📄 Скачать наш прайс-лист
+        </a>
+      </p>
+      <address>
+        Контакты: <a href="mailto:info@luxstay.com">info@luxstay.com</a>
+      </address>
+    </footer>
+  </body>
+</html>

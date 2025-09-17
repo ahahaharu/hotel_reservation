@@ -1,0 +1,26 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Vacancies - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Available Positions</h2>
+    
+    {% if vacancies %}
+        <ul>
+            {% for vacancy in vacancies %}
+                <li>
+                    <h3>{{ vacancy.title }}</h3>
+                    <p>{{ vacancy.description }}</p>
+                    <h4>Requirements:</h4>
+                    <p>{{ vacancy.requirements }}</p>
+                    {% if vacancy.salary %}
+                        <p>Salary: {{ vacancy.salary }}</p>
+                    {% endif %}
+                    <p>Posted on: {{ vacancy.date_posted|date:"F d, Y" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No open positions at the moment.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Promo Codes - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Promotional Offers</h2>
+    
+    <h3>Active Promo Codes</h3>
+    {% if active_codes %}
+        <ul>
+            {% for code in active_codes %}
+                <li>
+                    <h4>{{ code.code }}</h4>
+                    <p>{{ code.description }}</p>
+                    {% if code.discount_percent > 0 %}
+                        <p>Discount: {{ code.discount_percent }}%</p>
+                    {% endif %}
+                    {% if code.discount_amount > 0 %}
+                        <p>Discount amount: ${{ code.discount_amount }}</p>
+                    {% endif %}
+                    <p>Valid until: {{ code.valid_to|date:"F d, Y" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No active promotional codes available.</p>
+    {% endif %}
+    
+    <h3>Expired Promo Codes</h3>
+    {% if expired_codes %}
+        <ul>
+            {% for code in expired_codes %}
+                <li>
+                    <h4>{{ code.code }}</h4>
+                    <p>{{ code.description }}</p>
+                    <p>Expired on: {{ code.valid_to|date:"F d, Y" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No expired promotional codes.</p>
+    {% endif %}
+{% endblock %}

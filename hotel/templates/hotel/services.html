@@ -1,0 +1,62 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Hotel Services - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Our Services</h2>
+
+    <!-- Banners -->
+    {% if banners %}
+        <div class="banners">
+            {% for banner in banners %}
+                <a href="{{ banner.link|default:'#' }}">
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image">
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Featured Article -->
+    {% if latest_article %}
+        <div class="latest-article">
+            <h3>Latest News: {{ latest_article.title }}</h3>
+            <p>{{ latest_article.summary }}</p>
+            <a href="{% url 'hotel:news' %}">Read more articles</a>
+        </div>
+    {% endif %}
+
+    <!-- Services Catalog -->
+    {% if services %}
+        <div class="services-grid">
+            {% for service in services %}
+                <div class="service-card">
+                    <h3>{{ service.name }}</h3>
+                    <p>{{ service.description|truncatewords:30 }}</p>
+                    {% if service.price %}
+                        <p>Price: ${{ service.price }}</p>
+                    {% else %}
+                        <p>Price: Contact us</p>
+                    {% endif %}
+                    <a href="{% url 'hotel:service_detail' service.pk %}" class="btn btn-primary">View Details</a>
+                    <a href="{% url 'hotel:add_to_cart' service.pk %}" class="btn btn-secondary">Add to Cart</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No services are currently available.</p>
+    {% endif %}
+
+    <!-- Partners -->
+    {% if partners %}
+        <div class="partners">
+            <h3>Our Partners</h3>
+            <div class="partners-grid">
+                {% for partner in partners %}
+                    <a href="{{ partner.website_url }}" target="_blank">
+                        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

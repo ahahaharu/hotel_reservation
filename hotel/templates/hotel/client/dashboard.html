@@ -1,0 +1,49 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}My Dashboard - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ client.first_name }}</h2>
+    
+    <div class="client-info">
+        <h3>Your Information</h3>
+        <p>Name: {{ client.first_name }} {{ client.last_name }}</p>
+        <p>Email: {{ client.email }}</p>
+        <p>Phone: {{ client.phone }}</p>
+        {% if client.age %}
+            <p>Age: {{ client.age }}</p>
+        {% endif %}
+        {% if client.address %}
+            <p>Address: {{ client.address }}</p>
+        {% endif %}
+    </div>
+    
+    <h3>Your Reservations</h3>
+    {% if reservations %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Status</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reservation in reservations %}
+                    <tr>
+                        <td>{{ reservation.room.room_number }} ({{ reservation.room.category.name }})</td>
+                        <td>{{ reservation.check_in_date }}</td>
+                        <td>{{ reservation.check_out_date }}</td>
+                        <td>{{ reservation.get_status_display }}</td>
+                        <td>${{ reservation.total_price }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>You don't have any reservations yet.</p>
+        <p><a href="{% url 'hotel:room_list' %}">Browse our rooms to make a reservation</a></p>
+    {% endif %}
+{% endblock %}

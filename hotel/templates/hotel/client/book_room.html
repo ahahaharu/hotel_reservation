@@ -1,0 +1,32 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Book Room - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Book Room: {{ room.room_number }}</h2>
+    
+    <div>
+        <h3>Room Details</h3>
+        <p>Category: {{ room.category.name }}</p>
+        <p>Capacity: {{ room.capacity }} person(s)</p>
+        <p>Price per night: ${{ room.category.base_price }}</p>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+            <div class="error">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit">Book Now</button>
+    </form>
+    
+    <p><a href="{% url 'hotel:room_detail' room.pk %}">Back to Room Details</a></p>
+{% endblock %}

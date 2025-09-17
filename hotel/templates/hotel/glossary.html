@@ -1,0 +1,19 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Glossary - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Glossary of Terms</h2>
+    
+    {% if faqs %}
+        <dl>
+            {% for faq in faqs %}
+                <dt>{{ faq.question }}</dt>
+                <dd>{{ faq.answer }}</dd>
+                <small>Added on: {{ faq.date_added|date:"F d, Y" }}</small>
+            {% endfor %}
+        </dl>
+    {% else %}
+        <p>No FAQs available.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Reviews - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Guest Reviews</h2>
+    
+    {% if user.is_authenticated %}
+        <div class="review-form">
+            <h3>Leave Your Review</h3>
+            <form method="post">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                    <div class="error">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                <div class="form-group">
+                    <label for="{{ form.rating.id_for_label }}">Rating:</label>
+                    {{ form.rating }}
+                    {% if form.rating.errors %}
+                        <div class="error">{{ form.rating.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="form-group">
+                    <label for="{{ form.text.id_for_label }}">Your Review:</label>
+                    {{ form.text }}
+                    {% if form.text.errors %}
+                        <div class="error">{{ form.text.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <button type="submit">Submit Review</button>
+            </form>
+        </div>
+    {% else %}
+        <p>Please <a href="{% url 'hotel:login' %}">login</a> to leave a review.</p>
+    {% endif %}
+    
+    <h3>What Our Guests Say</h3>
+    {% if reviews %}
+        <ul class="reviews-list">
+            {% for review in reviews %}
+                <li>
+                    <h4>{{ review.client }} - {{ review.get_rating_display }}</h4>
+                    <p>{{ review.text }}</p>
+                    <p><small>Posted on: {{ review.date_posted|date:"d/m/Y" }}</small></p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No reviews available yet. Be the first to leave a review!</p>
+    {% endif %}
+{% endblock %}

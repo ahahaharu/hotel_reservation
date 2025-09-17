@@ -1,0 +1,53 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}My Profile - Hotel{% endblock %}
+
+{% block content %}
+    <h2>My Profile</h2>
+    
+    <div>
+        <h3>Update Profile Information</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Update</button>
+        </form>
+    </div>
+    
+    <div>
+        <h3>My Reservations</h3>
+        {% if reservations %}
+            <ul>
+                {% for reservation in reservations %}
+                    <li>
+                        <p>Room: {{ reservation.room.room_number }} ({{ reservation.room.category.name }})</p>
+                        <p>Check-in: {{ reservation.check_in_date }}</p>
+                        <p>Check-out: {{ reservation.check_out_date }}</p>
+                        <p>Status: {{ reservation.get_status_display }}</p>
+                        <p>Total: ${{ reservation.total_price }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You don't have any reservations yet.</p>
+        {% endif %}
+    </div>
+    
+    <div>
+        <h3>My Reviews</h3>
+        {% if reviews %}
+            <ul>
+                {% for review in reviews %}
+                    <li>
+                        <p>Rating: {{ review.get_rating_display }}</p>
+                        <p>{{ review.text }}</p>
+                        <p>Posted on: {{ review.date_posted|date:"F d, Y" }}</p>
+                        <p>Status: {% if review.is_published %}Published{% else %}Pending Approval{% endif %}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You haven't written any reviews yet.</p>
+        {% endif %}
+    </div>
+{% endblock %}

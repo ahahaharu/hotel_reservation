@@ -1,0 +1,10 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}Room Booking Distribution - Hotel{% endblock %}
+
+{% block content %}
+    <h2>Room Booking Distribution</h2>
+    <p>This chart shows the distribution of room bookings by category.</p>
+    <img src="{{ chart_image.image.url }}" alt="Room Booking Distribution Chart">
+    <p><small>Generated on: {{ chart_image.created_at|date:"d/m/Y H:i:s" }}</small></p>
+{% endblock %}
