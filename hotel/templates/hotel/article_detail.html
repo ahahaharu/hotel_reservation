@@ -1,0 +1,27 @@
+{% extends "hotel/base.html" %}
+
+{% block title %}{{ article.title }} - Hotel{% endblock %}
+
+{% block content %}
+    <h2>{{ article.title }}</h2>
+    
+    <div class="article-detail">
+        {% if article.image %}
+            <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-image" style="height: 200px;">
+        {% else %}
+            <img src="/media/placeholder.png" alt="No image" class="news-image" style="height: 200px;">
+        {% endif %}
+        <p><small>Published on: {{ article.published_date|date:"F d, Y" }}</small></p>
+        <div class="article-content">
+            {{ article.content|linebreaks }}
+        </div>
+        {% if article.tags.all %}
+            <p><strong>Tags:</strong> 
+                {% for tag in article.tags.all %}
+                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+        {% endif %}
+        <a href="{% url 'hotel:news' %}" class="btn btn-primary">Вернуться к новостям</a>
+    </div>
+{% endblock %}

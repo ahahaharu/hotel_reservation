@@ -723,3 +723,8 @@ def order_success(request, order_id):
     """Order success page"""
     order = get_object_or_404(Order, id=order_id)
     return render(request, 'hotel/order_success.html', {'order': order})
+
+def article_detail(request, slug):
+    """View for displaying a single article"""
+    article = get_object_or_404(Article, slug=slug, is_published=True)
+    return render(request, 'hotel/article_detail.html', {'article': article})
