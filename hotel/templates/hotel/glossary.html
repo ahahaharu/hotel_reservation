@@ -3,16 +3,20 @@
 {% block title %}Glossary - Hotel{% endblock %}
 
 {% block content %}
-    <h2>Glossary of Terms</h2>
+    <h2>Frequently Asked Questions</h2>
     
     {% if faqs %}
-        <dl>
+        <div class="faq-list">
             {% for faq in faqs %}
-                <dt>{{ faq.question }}</dt>
-                <dd>{{ faq.answer }}</dd>
-                <small>Added on: {{ faq.date_added|date:"F d, Y" }}</small>
+                <details class="faq-item">
+                    <summary>
+                        {{ faq.question }}
+                        <small>(Added on: {{ faq.date_added|date:"F d, Y" }})</small>
+                    </summary>
+                    <p>{{ faq.answer|linebreaks }}</p>
+                </details>
             {% endfor %}
-        </dl>
+        </div>
     {% else %}
         <p>No FAQs available.</p>
     {% endif %}
