@@ -121,12 +121,29 @@ class CompanyInfo(models.Model):
     history = models.TextField(blank=True, null=True)
     foundation_year = models.PositiveIntegerField(blank=True, null=True)
     legal_info = models.TextField(blank=True, null=True)
-    
+    video_file = models.FileField(upload_to='company/videos/', blank=True, null=True, help_text="Upload a video file (e.g., MP4, WebM)")
+    # video_url = models.URLField(blank=True, null=True, help_text="URL to company video (e.g., YouTube embed link)")  # Оставлено для совместимости, если нужно
+    certificates = models.TextField(blank=True, null=True, help_text="Text description of company certificates")
+
     class Meta:
         verbose_name_plural = "Company Information"
     
     def __str__(self):
         return self.name
+
+class CompanyHistory(models.Model):
+    """Model for company history by year"""
+    company = models.ForeignKey(CompanyInfo, on_delete=models.CASCADE, related_name='history_entries')
+    year = models.PositiveIntegerField()
+    event = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name_plural = "Company History Entries"
+        ordering = ['year']
+
+    def __str__(self):
+        return f"{self.year} - {self.company.name}"
 
 class FAQ(models.Model):
     """Model for frequently asked questions"""

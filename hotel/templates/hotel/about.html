@@ -9,13 +9,37 @@
         <h3>{{ company_info.name }}</h3>
         <p>{{ company_info.description }}</p>
         
-        {% if company_info.foundation_year %}
-            <p>Established: {{ company_info.foundation_year }}</p>
+        {% if company_info.logo %}
+            <img src="{{ company_info.logo.url }}" alt="{{ company_info.name }} Logo" style="max-width: 200px;">
         {% endif %}
         
-        {% if company_info.history %}
+        {% if company_info.foundation_year %}
+            <p><strong>Established:</strong> {{ company_info.foundation_year }}</p>
+        {% endif %}
+        
+        {% if company_info.video_file %}
+            <h3>Our Video</h3>
+            <video width="560" height="315" controls>
+                <source src="{{ company_info.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% endif %}
+        
+        {% if company_info.history_entries.all %}
+            <h3>Our History by Year</h3>
+            <ul>
+                {% for entry in company_info.history_entries.all %}
+                    <li><strong>{{ entry.year }}:</strong> {{ entry.event }}</li>
+                {% endfor %}
+            </ul>
+        {% elif company_info.history %}
             <h3>Our History</h3>
             <p>{{ company_info.history }}</p>
+        {% endif %}
+        
+        {% if company_info.certificates %}
+            <h3>Certificates</h3>
+            <p>{{ company_info.certificates }}</p>
         {% endif %}
         
         {% if company_info.legal_info %}

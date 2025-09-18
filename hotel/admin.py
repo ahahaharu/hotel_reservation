@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     Article, Client, RoomCategory, Room, RoomImage, Reservation, CompanyInfo, FAQ, Staff, 
     Vacancy, Review, PromoCode, Amenity, Service, Tag, ServiceBooking, ChartImage,
-    Banner, Partner, Cart, CartItem, Order, OrderItem
+    Banner, Partner, Cart, CartItem, Order, OrderItem, CompanyHistory
 )
 
 def make_active(modeladmin, request, queryset):
@@ -179,3 +179,9 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('order', 'service', 'quantity', 'price', 'total_price')
+
+@admin.register(CompanyHistory)
+class CompanyHistoryAdmin(admin.ModelAdmin):
+    list_display = ['company', 'year', 'event']
+    list_filter = ['year']
+    search_fields = ['event']
