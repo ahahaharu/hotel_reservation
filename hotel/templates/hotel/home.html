@@ -5,7 +5,6 @@ Hotel{%endblock %} {% block content %}
   <p itemprop="description">Лучший отель для вашего комфортного отдыха</p>
 </section>
 
-<!-- Promotional Banners -->
 {% if banners %}
 <section id="banners" class="banner-slider" >
   <h3>Специальные предложения</h3>
@@ -31,7 +30,6 @@ Hotel{%endblock %} {% block content %}
 </section>
 {% endif %}
 
-<!-- Featured Services Catalog -->
 <section id="services-catalog">
   <h3>Популярные услуги</h3>
   <div class="services-grid">
@@ -116,13 +114,12 @@ Hotel{%endblock %} {% block content %}
 {% endif %}
 
 <!-- API Data Section -->
-<section id="api-data">
   {% if daily_quote %}
   <article class="api-section">
     <h3>Цитата дня</h3>
     <blockquote cite="https://favqs.com">
       <p><q>{{ daily_quote.quote }}</q></p>
-      <footer>— <cite>{{ daily_quote.author }}</cite></footer>
+      <p>— <cite>{{ daily_quote.author }}</cite></p>
     </blockquote>
   </article>
   {% endif %} {% if exchange_rates %}
@@ -178,17 +175,13 @@ Hotel{%endblock %} {% block content %}
     <footer>— Довольный клиент</footer>
   </blockquote>
 
-  <p>
-    Сокращения: <abbr title="Люкс Отель">LuxStay</abbr> -
-    <dfn>отель премиум-класса</dfn> с высочайшим уровнем сервиса.
-  </p>
 
-  <pre><code>
-Стихотворение о нашем отеле:
-В LuxStay отдых прекрасен,
-Комфорт здесь всегда ясен.
-Мы гостей принимаем с душой,
-И дарим покой и покой.
-        </code></pre>
+  <pre>
+    Стихотворение о нашем отеле:
+    В LuxStay отдых прекрасен,
+    Комфорт здесь всегда ясен.
+    Мы гостей принимаем с душой,
+    И дарим покой и покой.
+  </pre>
 </section>
 {% endblock %}

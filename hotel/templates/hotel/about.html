@@ -3,50 +3,105 @@
 {% block title %}About - Hotel{% endblock %}
 
 {% block content %}
-    <h2>About Our Hotel</h2>
+    <aside style="float: right;">
+        <nav>
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="#about">About Our Hotel</a></li>
+            {% if company_info.video_file %}
+            <li><a href="#video">Our Video</a></li>
+            {% endif %}
+            <li><a href="#history">Our History</a></li>
+            {% if company_info.certificates %}
+            <li><a href="#certificates">Certificates</a></li>
+            {% endif %}
+            {% if company_info.legal_info %}
+            <li><a href="#legal">Legal Information</a></li>
+            {% endif %}
+            <li><a href="#api">API</a></li>
+        </ul>
+        </nav>
+    </aside>
+
+    <div itemscope itemtype="http://schema.org/Hotel">
+        <h2 id="about">About Our Hotel</h2>
+        <meta itemprop="name" content="LuxStay">
+        <meta itemprop="description" content="A luxurious hotel offering top-notch services in Moscow.">
+        
+        {% if company_info %}
+            <h3 itemprop="name">{{ company_info.name }}</h3>
+            <p itemprop="description">{{ company_info.description }}</p>
+            
+            {% if company_info.logo %}
+                <img src="{{ company_info.logo.url }}" alt="{{ company_info.name }} Logo" style="max-width: 200px;" itemprop="image">
+            {% endif %}
+            
+            {% if company_info.foundation_year %}
+                <p><strong>Established:</strong><span itemprop="foundingDate"> {{ company_info.foundation_year }} </span></p>
+            {% endif %}
+            
+            {% if company_info.video_file %}
+                <h3 id="video">Our Video</h3>
+                <video width="560" height="315" controls>
+                    <source src="{{ company_info.video_file.url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            {% endif %}
+            
+            {% if company_info.history_entries.all %}
+                <h3>Our History by Year</h3>
+                <ul>
+                    {% for entry in company_info.history_entries.all %}
+                        <li><strong>{{ entry.year }}:</strong> {{ entry.event }}</li>
+                    {% endfor %}
+                </ul>
+            {% elif company_info.history %}
+                <h3 id="history">Our History</h3>
+                <p>{{ company_info.history }}</p>
+            {% endif %}
+            
+            {% if company_info.certificates %}
+                <h3 id="certificates">Certificates</h3>
+                <p>{{ company_info.certificates }}</p>
+            {% endif %}
+            
+            {% if company_info.legal_info %}
+                <h3 id="legal">Legal Information</h3>
+                <p>{{ company_info.legal_info }}</p>
+                <abbr title='Общество с ограниченной ответственностью'>ООО</abbr>
+                <abbr title='Идентификационный номер налогоплательщика'>ИНН</abbr>
+                <abbr title='Основной государственный регистрационный номер'>ОГРН</abbr>
+            {% endif %}
+        {% else %}
+            <p>Company information not available.</p>
+        {% endif %}
+
+        <h3 id="api">API</h3>
+        <pre><code class="language-json">
+            {
+                "room_id": 1,
+                "hotel": "LuxStay",
+                "type": "Deluxe Suite",
+                "price_per_night": 15000,
+                "currency": "RUB",
+                "availability": {
+                    "start_date": "2025-10-01",
+                    "end_date": "2025-12-31"
+                },
+                "amenities": [
+                    "Free Wi-Fi",
+                    "King-size bed",
+                    "Private bathroom",
+                    "Room service"
+                ],
+                "images": [
+                    "https://luxstay.ru/media/rooms/deluxe_suite_1.jpg",
+                    "https://luxstay.ru/media/rooms/deluxe_suite_2.jpg"
+                ],
+                "description": "A spacious deluxe suite with a stunning view of Moscow, perfect for a luxurious stay."
+            }
+        </code></pre>
+    </div>
+
     
-    {% if company_info %}
-        <h3>{{ company_info.name }}</h3>
-        <p>{{ company_info.description }}</p>
-        
-        {% if company_info.logo %}
-            <img src="{{ company_info.logo.url }}" alt="{{ company_info.name }} Logo" style="max-width: 200px;">
-        {% endif %}
-        
-        {% if company_info.foundation_year %}
-            <p><strong>Established:</strong> {{ company_info.foundation_year }}</p>
-        {% endif %}
-        
-        {% if company_info.video_file %}
-            <h3>Our Video</h3>
-            <video width="560" height="315" controls>
-                <source src="{{ company_info.video_file.url }}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-        {% endif %}
-        
-        {% if company_info.history_entries.all %}
-            <h3>Our History by Year</h3>
-            <ul>
-                {% for entry in company_info.history_entries.all %}
-                    <li><strong>{{ entry.year }}:</strong> {{ entry.event }}</li>
-                {% endfor %}
-            </ul>
-        {% elif company_info.history %}
-            <h3>Our History</h3>
-            <p>{{ company_info.history }}</p>
-        {% endif %}
-        
-        {% if company_info.certificates %}
-            <h3>Certificates</h3>
-            <p>{{ company_info.certificates }}</p>
-        {% endif %}
-        
-        {% if company_info.legal_info %}
-            <h3>Legal Information</h3>
-            <p>{{ company_info.legal_info }}</p>
-        {% endif %}
-    {% else %}
-        <p>Company information not available.</p>
-    {% endif %}
 {% endblock %}
