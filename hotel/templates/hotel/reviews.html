@@ -1,6 +1,6 @@
 {% extends "hotel/base.html" %}
 
-{% block title %}Reviews - Hotel{% endblock %}
+{% block title %}Reviews - LuxStay{% endblock %}
 
 {% block content %}
     <h2>Guest Reviews</h2>
@@ -36,23 +36,24 @@
                 </div>
                 
                 <button type="submit">Submit Review</button>
+                <a href="{% url 'hotel:client_dashboard' %}" class="btn btn-secondary">Go to Profile</a>
             </form>
         </div>
     {% else %}
-        <p>Please <a href="{% url 'hotel:login' %}">login</a> to leave a review.</p>
+        <p>Please <a href="{% url 'hotel:login' %}">login</a> or <a href="{% url 'hotel:register' %}">register</a> to leave a review.</p>
     {% endif %}
     
     <h3>What Our Guests Say</h3>
     {% if reviews %}
-        <ul class="reviews-list">
+        <div class="reviews-grid">
             {% for review in reviews %}
-                <li>
-                    <h4>{{ review.client }} - {{ review.get_rating_display }}</h4>
-                    <p>{{ review.text }}</p>
+                <div class="review-card">
+                    <h4>{{ review.client.user.get_full_name|default:review.client.user.username }} - {{ review.get_rating_display }}</h4>
+                    <p>{{ review.text|linebreaks }}</p>
                     <p><small>Posted on: {{ review.date_posted|date:"d/m/Y" }}</small></p>
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p>No reviews available yet. Be the first to leave a review!</p>
     {% endif %}
