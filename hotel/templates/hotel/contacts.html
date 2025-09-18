@@ -6,23 +6,25 @@
     <h2>Our Team</h2>
     
     {% if staff %}
-        <ul>
+        <div class="staff-grid">
             {% for member in staff %}
-                <li>
+                <div class="staff-card">
                     {% if member.photo %}
-                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="max-width: 200px; border-radius: 5px; margin-bottom: 10px;">
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="height: 200px;">
+                    {% else %}
+                        <img src="/media/placeholder.png" alt="No photo" style="height: 200px;">
                     {% endif %}
                     <h3>{{ member.name }} - {{ member.position }}</h3>
-                    <p>{{ member.description }}</p>
+                    <p>{{ member.description|linebreaks }}</p>
                     {% if member.email %}
-                        <p>Email: {{ member.email }}</p>
+                        <p><strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a></p>
                     {% endif %}
                     {% if member.phone %}
-                        <p>Phone: {{ member.phone }}</p>
+                        <p><strong>Phone:</strong> {{ member.phone }}</p>
                     {% endif %}
-                </li>
+                </div>
             {% endfor %}
-        </ul>
+        </div>
     {% else %}
         <p>No staff information available.</p>
     {% endif %}
