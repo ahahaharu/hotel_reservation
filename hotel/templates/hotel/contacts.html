@@ -3,29 +3,67 @@
 {% block title %}Contacts - Hotel{% endblock %}
 
 {% block content %}
-    <h2>Our Team</h2>
-    
-    {% if staff %}
-        <div class="staff-grid">
-            {% for member in staff %}
-                <div class="staff-card">
-                    {% if member.photo %}
-                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="height: 200px;">
-                    {% else %}
-                        <img src="/media/placeholder.png" alt="No photo" style="height: 200px;">
-                    {% endif %}
-                    <h3>{{ member.name }} - {{ member.position }}</h3>
-                    <p>{{ member.description|linebreaks }}</p>
-                    {% if member.email %}
-                        <p><strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a></p>
-                    {% endif %}
-                    {% if member.phone %}
-                        <p><strong>Phone:</strong> {{ member.phone }}</p>
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No staff information available.</p>
-    {% endif %}
+<h2>Our Team</h2>
+
+{% if staff %}
+    <div>
+        {% for member in staff %}
+            <div>
+                {% if member.photo %}
+                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="height: 200px;">
+                {% else %}
+                    <img src="/media/placeholder.png" alt="No photo" style="height: 200px;">
+                {% endif %}
+                <h3>{{ member.name }} - {{ member.position }}</h3>
+                <p>{{ member.description|linebreaks }}</p>
+                {% if member.email %}
+                    <p><strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a></p>
+                {% endif %}
+                {% if member.phone %}
+                    <p><strong>Phone:</strong> {{ member.phone }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No staff information available.</p>
+{% endif %}
+
+<section id="contact-info">
+    <h3>Contact Information</h3>
+    <table>
+        <caption>Our Hotel Branches</caption>
+        <thead>
+            <tr>
+                <th scope="col" id="city">City</th>
+                <th scope="col" id="address">Address</th>
+                <th scope="col" id="phone">Phone</th>
+                <th scope="col" id="year">Year Opened</th>
+                <th scope="col" id="staff-count">Staff Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row" id="moscow" rowspan="2">LuxStay Moscow</th>
+                <td headers="city moscow address">ул. Примерная, д. 1</td>
+                <td headers="city moscow phone"><a href="tel:+74951234567">+7 (495) 123-45-67</a></td>
+                <td headers="city moscow year">2000</td>
+                <td headers="city moscow staff-count">50</td>
+            </tr>
+            <tr>
+                <td headers="city moscow address">ул. Центральная, д. 10</td>
+                <td headers="city moscow phone"><a href="tel:+74959876543">+7 (495) 987-65-43</a></td>
+                <td headers="city moscow year">2010</td>
+                <td headers="city moscow staff-count">30</td>
+            </tr>
+            <tr>
+                <th scope="row" id="spb">LuxStay St. Petersburg</th>
+                <td headers="city spb address">наб. Реки Фонтанки, д. 5</td>
+                <td headers="city spb phone"><a href="tel:+78122345678">+7 (812) 234-56-78</a></td>
+                <td headers="city spb year">2015</td>
+                <td headers="city spb staff-count">40</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
 {% endblock %}

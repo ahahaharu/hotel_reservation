@@ -6,37 +6,37 @@
     <h2>Guest Reviews</h2>
     
     {% if user.is_authenticated %}
-        <div class="review-form">
+        <div>
             <h3>Leave Your Review</h3>
             <form method="post">
                 {% csrf_token %}
                 
                 {% if form.non_field_errors %}
-                    <div class="error">
+                    <div>
                         {% for error in form.non_field_errors %}
                             <p>{{ error }}</p>
                         {% endfor %}
                     </div>
                 {% endif %}
                 
-                <div class="form-group">
+                <div>
                     <label for="{{ form.rating.id_for_label }}">Rating:</label>
                     {{ form.rating }}
                     {% if form.rating.errors %}
-                        <div class="error">{{ form.rating.errors }}</div>
+                        <div>{{ form.rating.errors }}</div>
                     {% endif %}
                 </div>
                 
-                <div class="form-group">
+                <div>
                     <label for="{{ form.text.id_for_label }}">Your Review:</label>
                     {{ form.text }}
                     {% if form.text.errors %}
-                        <div class="error">{{ form.text.errors }}</div>
+                        <div>{{ form.text.errors }}</div>
                     {% endif %}
                 </div>
                 
                 <button type="submit">Submit Review</button>
-                <a href="{% url 'hotel:client_dashboard' %}" class="btn btn-secondary">Go to Profile</a>
+                <a href="{% url 'hotel:client_dashboard' %}">Go to Profile</a>
             </form>
         </div>
     {% else %}
@@ -45,9 +45,9 @@
     
     <h3>What Our Guests Say</h3>
     {% if reviews %}
-        <div class="reviews-grid">
+        <div>
             {% for review in reviews %}
-                <div class="review-card">
+                <div>
                     <h4>{{ review.client.user.get_full_name|default:review.client.user.username }} - {{ review.get_rating_display }}</h4>
                     <p>{{ review.text|linebreaks }}</p>
                     <p><small>Posted on: {{ review.date_posted|date:"d/m/Y" }}</small></p>

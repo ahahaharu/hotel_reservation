@@ -7,10 +7,10 @@
 
     <!-- Banners -->
     {% if banners %}
-        <div class="banners">
+        <div>
             {% for banner in banners %}
                 <a href="{{ banner.link|default:'#' }}">
-                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" class="banner-image">
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}">
                 </a>
             {% endfor %}
         </div>
@@ -18,7 +18,7 @@
 
     <!-- Featured Article -->
     {% if latest_article %}
-        <div class="latest-article">
+        <div>
             <h3>Latest News: {{ latest_article.title }}</h3>
             <p>{{ latest_article.summary }}</p>
             <a href="{% url 'hotel:news' %}">Read more articles</a>
@@ -27,9 +27,9 @@
 
     <!-- Services Catalog -->
     {% if services %}
-        <div class="services-grid">
+        <div>
             {% for service in services %}
-                <div class="service-card">
+                <div>
                     <h3>{{ service.name }}</h3>
                     <p>{{ service.description|truncatewords:30 }}</p>
                     {% if service.price %}
@@ -37,8 +37,8 @@
                     {% else %}
                         <p>Price: Contact us</p>
                     {% endif %}
-                    <a href="{% url 'hotel:service_detail' service.pk %}" class="btn btn-primary">View Details</a>
-                    <a href="{% url 'hotel:add_to_cart' service.pk %}" class="btn btn-secondary">Add to Cart</a>
+                    <a href="{% url 'hotel:service_detail' service.pk %}">View Details</a>
+                    <a href="{% url 'hotel:add_to_cart' service.pk %}">Add to Cart</a>
                 </div>
             {% endfor %}
         </div>
@@ -48,12 +48,12 @@
 
     <!-- Partners -->
     {% if partners %}
-        <div class="partners">
+        <div>
             <h3>Our Partners</h3>
-            <div class="partners-grid">
+            <div>
                 {% for partner in partners %}
                     <a href="{{ partner.website_url }}" target="_blank">
-                        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+                        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}">
                     </a>
                 {% endfor %}
             </div>

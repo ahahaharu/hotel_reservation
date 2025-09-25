@@ -6,7 +6,7 @@ Hotel{%endblock %} {% block content %}
 </section>
 
 {% if banners %}
-<section id="banners" class="banner-slider" >
+<section id="banners">
   <h3>Специальные предложения</h3>
   <div style="display: flex">
   {% for banner in banners %}
@@ -32,10 +32,9 @@ Hotel{%endblock %} {% block content %}
 
 <section id="services-catalog">
   <h3>Популярные услуги</h3>
-  <div class="services-grid">
+  <div>
     {% for service in featured_services %}
     <article
-      class="service-card"
       itemscope
       itemtype="http://schema.org/Service"
     >
@@ -53,11 +52,11 @@ Hotel{%endblock %} {% block content %}
       </p>
       {% endif %}
       <p>
-        <a href="{% url 'hotel:service_detail' service.pk %}" class="btn"
+        <a href="{% url 'hotel:service_detail' service.pk %}"
           >Подробнее</a
         >
-        <a href="{% url 'hotel:add_to_cart' service.id %}" class="btn"
-          >🛒 В корзину</a
+        <a href="{% url 'hotel:add_to_cart' service.id %}"
+          >В корзину</a
         >
       </p>
     </article>
@@ -66,7 +65,6 @@ Hotel{%endblock %} {% block content %}
   <p><a href="{% url 'hotel:services' %}">Посмотреть все услуги →</a></p>
 </section>
 
-<!-- Latest News -->
 <section id="latest-news">
   <h3>Последние новости</h3>
   {% if latest_article %}
@@ -90,11 +88,10 @@ Hotel{%endblock %} {% block content %}
   {% endif %}
 </section>
 
-<!-- Partners Section -->
 {% if partners %}
 <section id="partners">
   <h3>Наши партнеры</h3>
-  <div class="partners-grid">
+  <div>
     {% for partner in partners %}
     <a
       href="{{ partner.website_url }}"
@@ -115,7 +112,7 @@ Hotel{%endblock %} {% block content %}
 
 <!-- API Data Section -->
   {% if daily_quote %}
-  <article class="api-section">
+  <article>
     <h3>Цитата дня</h3>
     <blockquote cite="https://favqs.com">
       <p><q>{{ daily_quote.quote }}</q></p>
@@ -123,7 +120,7 @@ Hotel{%endblock %} {% block content %}
     </blockquote>
   </article>
   {% endif %} {% if exchange_rates %}
-  <aside class="api-section">
+  <aside>
     <h3>Текущие курсы валют (USD)</h3>
     <table>
       <thead>

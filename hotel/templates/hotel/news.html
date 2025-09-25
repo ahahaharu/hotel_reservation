@@ -6,18 +6,18 @@
     <h2>News & Updates</h2>
     
     {% if articles %}
-        <div class="news-grid">
+        <div>
             {% for article in articles %}
-                <div class="news-card">
+                <div>
                     {% if article.image %}
-                        <img src="{{ article.image.url }}" alt="{{ article.title }}" class="news-image" style="height: 200px;">
+                        <img src="{{ article.image.url }}" alt="{{ article.title }}" style="height: 200px;">
                     {% else %}
-                        <img src="/media/placeholder.png" alt="No image" class="news-image" style="height: 200px;">
+                        <img src="/media/placeholder.png" alt="No image" style="height: 200px;">
                     {% endif %}
                     <h3>{{ article.title }}</h3>
                     <p>{{ article.summary }}</p>
                     <p><small>Published on: {{ article.published_date|date:"F d, Y" }}</small></p>
-                    <a href="{% url 'hotel:article_detail' article.slug %}" class="btn btn-primary">Читать далее</a>
+                    <a href="{% url 'hotel:article_detail' article.slug %}">Читать далее</a>
                 </div>
             {% endfor %}
         </div>

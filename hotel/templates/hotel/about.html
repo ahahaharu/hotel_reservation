@@ -35,6 +35,10 @@
             {% if company_info.logo %}
                 <img src="{{ company_info.logo.url }}" alt="{{ company_info.name }} Logo" style="max-width: 200px;" itemprop="image">
             {% endif %}
+
+            <div>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d33021.09235206612!2d37.56037333109431!3d55.7649853307222!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sru!2sde!4v1758215432304!5m2!1sru!2sde" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
             
             {% if company_info.foundation_year %}
                 <p><strong>Established:</strong><span itemprop="foundingDate"> {{ company_info.foundation_year }} </span></p>
@@ -47,6 +51,11 @@
                     Your browser does not support the video tag.
                 </video>
             {% endif %}
+
+            <audio controls preload="metadata">
+                <source src="/media/audio/audio.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
             
             {% if company_info.history_entries.all %}
                 <h3>Our History by Year</h3>
@@ -77,7 +86,7 @@
         {% endif %}
 
         <h3 id="api">API</h3>
-        <pre><code class="language-json">
+        <pre><code>
             {
                 "room_id": 1,
                 "hotel": "LuxStay",

@@ -2,7 +2,7 @@
 <h2>Ваша корзина</h2>
 
 {% if cart_items %}
-<section class="cart-content">
+<section>
   <table>
     <caption>
       Товары в корзине
@@ -64,20 +64,20 @@
     </tfoot>
   </table>
 
-  <div class="cart-actions">
-    <a href="{% url 'hotel:services' %}" class="btn btn-secondary">
+  <div>
+    <a href="{% url 'hotel:services' %}">
       ← Продолжить покупки
     </a>
-    <a href="{% url 'hotel:checkout' %}" class="btn btn-primary">
+    <a href="{% url 'hotel:checkout' %}">
       Перейти к оплате →
     </a>
   </div>
 </section>
 {% else %}
-<section class="empty-cart">
+<section>
   <p>Ваша корзина пуста.</p>
   <p>
-    <a href="{% url 'hotel:services' %}" class="btn">Посмотреть наши услуги</a>
+    <a href="{% url 'hotel:services' %}">Посмотреть наши услуги</a>
   </p>
 </section>
 {% endif %} {% endblock %}

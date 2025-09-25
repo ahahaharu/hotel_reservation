@@ -1,7 +1,7 @@
 {% extends "hotel/base.html" %} {% block title %}Оплата заказа{% endblock %} {% block content %}
 <h2>Оплата заказа</h2>
 
-<section class="payment-summary">
+<section>
   <h3>Сумма к оплате: ${{ total_price }}</h3>
 </section>
 
@@ -11,7 +11,7 @@
   <fieldset>
     <legend>Данные карты</legend>
 
-    <div class="form-group">
+    <div>
       <label for="card_number"
         >Номер карты: <abbr title="обязательно">*</abbr></label
       >
@@ -27,7 +27,7 @@
       />
     </div>
 
-    <div class="form-group">
+    <div>
       <label for="expiry_date"
         >Срок действия: <abbr title="обязательно">*</abbr></label
       >
@@ -43,7 +43,7 @@
       />
     </div>
 
-    <div class="form-group">
+    <div>
       <label for="cvv">CVV: <abbr title="обязательно">*</abbr></label>
       <input
         type="password"
@@ -61,16 +61,16 @@
   {% if not user.is_authenticated %}
   <fieldset>
     <legend>Контактная информация</legend>
-    <div class="form-group">
+    <div>
       <label for="email">Email: <abbr title="обязательно">*</abbr></label>
       <input type="email" id="email" name="email" required />
     </div>
   </fieldset>
   {% endif %}
 
-  <div class="payment-actions">
-    <a href="{% url 'hotel:checkout' %}" class="btn btn-secondary"> ← Назад </a>
-    <button type="submit" class="btn btn-primary">
+  <div>
+    <a href="{% url 'hotel:checkout' %}"> ← Назад </a>
+    <button type="submit">
       💳 Оплатить ${{ total_price }}
     </button>
   </div>

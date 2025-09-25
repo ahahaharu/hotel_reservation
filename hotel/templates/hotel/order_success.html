@@ -1,8 +1,8 @@
 {% extends "hotel/base.html" %} {% block title %}Заказ успешно оплачен{% endblock %} {% block content %}
-<section class="order-success">
+<section>
   <h2>✅ Заказ успешно оплачен!</h2>
 
-  <div class="order-details">
+  <div>
     <h3>Детали заказа #{{ order.id }}</h3>
     <p><strong>Email:</strong> {{ order.email }}</p>
     <p><strong>Сумма:</strong> ${{ order.total_amount }}</p>
@@ -21,9 +21,9 @@
 
   <p>Спасибо за ваш заказ! Мы свяжемся с вами в ближайшее время.</p>
 
-  <div class="success-actions">
-    <a href="{% url 'hotel:home' %}" class="btn btn-primary"> На главную </a>
-    <a href="{% url 'hotel:services' %}" class="btn btn-secondary">
+  <div>
+    <a href="{% url 'hotel:home' %}"> На главную </a>
+    <a href="{% url 'hotel:services' %}">
       Другие услуги
     </a>
   </div>

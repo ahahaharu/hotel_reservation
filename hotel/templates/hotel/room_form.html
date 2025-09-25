@@ -15,7 +15,7 @@
         {{ image_formset.management_form }}
         
         {% for image_form in image_formset %}
-            <div class="image-form">
+            <div>
                 {{ image_form.as_p }}
                 {% if image_form.instance.pk %}
                     <p>Current image: 

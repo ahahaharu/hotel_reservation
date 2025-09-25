@@ -5,35 +5,35 @@
 {% block content %}
     <h2>Our Rooms</h2>
     
-    <div class="filter-container">
+    <div>
         <h3>Search and Filter Rooms</h3>
         <form method="get" action="{% url 'hotel:room_list' %}">
-            <div class="form-group">
+            <div>
                 <label for="id_search">Search:</label>
                 {{ filter_form.search }}
             </div>
             
-            <div class="form-group">
+            <div>
                 <label for="id_sort_by">Sort by:</label>
                 {{ filter_form.sort_by }}
             </div>
             
-            <div class="form-group">
+            <div>
                 <label for="id_category">Category:</label>
                 {{ filter_form.category }}
             </div>
             
-            <div class="form-group">
+            <div>
                 <label for="id_min_price">Price Range:</label>
                 {{ filter_form.min_price }} to {{ filter_form.max_price }}
             </div>
             
-            <div class="form-group">
+            <div>
                 <label for="id_capacity">Minimum Capacity:</label>
                 {{ filter_form.capacity }}
             </div>
             
-            <div class="form-group">
+            <div>
                 {{ filter_form.available_only }}
                 <label for="id_available_only">Show only available rooms</label>
             </div>
@@ -49,12 +49,12 @@
     </div>
     {% endif %}
     
-    <div class="results-summary">
+    <div>
         <p>Showing {{ rooms|length }} result(s)</p>
     </div>
     
     {% if rooms %}
-        <div class="room-list">
+        <div>
             <h3>Available Rooms</h3>
             <ul>
                 {% for room in rooms %}

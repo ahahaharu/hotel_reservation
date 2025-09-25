@@ -3,7 +3,6 @@
 <h2>Оформление заказа</h2>
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px">
-  <!-- Order Summary -->
   <section>
     <h3>Ваш заказ</h3>
     <table>
@@ -46,11 +45,11 @@
     {% endif %}
 
     <div>
-      <a href="{% url 'hotel:cart_view' %}" class="btn btn-secondary">
+      <a href="{% url 'hotel:cart_view' %}">
         ← Назад в корзину
       </a>
       {% if user.is_authenticated %}
-      <a href="{% url 'hotel:payment' %}" class="btn btn-primary">
+      <a href="{% url 'hotel:payment' %}">
         Оплатить →
       </a>
       {% endif %}

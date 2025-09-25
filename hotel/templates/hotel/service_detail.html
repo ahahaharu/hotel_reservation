@@ -20,11 +20,11 @@
   </div>
   {% endif %}
 
-  <div class="service-actions">
-    <a href="{% url 'hotel:add_to_cart' service.id %}" class="btn btn-primary">
+  <div>
+    <a href="{% url 'hotel:add_to_cart' service.id %}">
       🛒 Добавить в корзину
     </a>
-    <a href="{% url 'hotel:services' %}" class="btn btn-secondary">
+    <a href="{% url 'hotel:services' %}">
       ← Назад к услугам
     </a>
   </div>

@@ -6,9 +6,9 @@
     <h2>Frequently Asked Questions</h2>
     
     {% if faqs %}
-        <div class="faq-list">
+        <div>
             {% for faq in faqs %}
-                <details class="faq-item">
+                <details>
                     <summary>
                         {{ faq.question }}
                         <small>(Added on: {{ faq.date_added|date:"F d, Y" }})</small>
