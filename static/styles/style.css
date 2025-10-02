@@ -1,0 +1,252 @@
+/* Reset default margins and paddings */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 1440px;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+  padding-top: 60px; /* Adjust for fixed nav */
+}
+
+/* Fixed navigation */
+.fixed-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #1a1a1a;
+  padding: 10px 20px;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.fixed-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.fixed-nav a:hover {
+  text-decoration: underline;
+}
+
+/* Aside navigation */
+.aside-nav {
+  float: right;
+  width: 250px;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-left: 2px solid #3498db;
+  margin-left: 20px;
+}
+
+.aside-nav h3 {
+  font-size: 18px;
+  color: #3498db;
+  margin-bottom: 15px;
+}
+
+.aside-nav ul {
+  list-style: none;
+}
+
+.aside-nav li {
+  margin-bottom: 10px;
+}
+
+.aside-nav a {
+  color: #555;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.aside-nav a:hover {
+  color: #3498db;
+  text-decoration: underline;
+}
+
+.hotel-content {
+  margin-right: 300px;
+  padding: 20px;
+}
+
+.company-logo {
+  max-width: 200px;
+  transition: transform 0.3s ease;
+}
+
+.company-logo:hover {
+  transform: scale(1.1) rotate(5deg); 
+}
+
+.certificates-section {
+  max-width: 400px;
+  position: relative;
+  padding: 20px;
+  margin: 20px 0;
+  border: 20px solid transparent;
+  -webkit-border-image: url('/static/images/border.png') 50 round;
+  -moz-border-image: url('/static/images/border.png') 50 round;
+  -o-border-image: url('/static/images/border.png') 50 round;
+  border-image: url('/static/images/border.png') 50 round;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(200, 200, 200, 0.6));
+  z-index: 1;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.certificates-section .certificate-image {
+  max-width: 100%;
+  width: 300px;
+  height: auto;
+  border: 3px solid #3498db;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin: 15px auto;
+  display: block;
+  z-index: 2;
+}
+
+.certificates-section p {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #34495e;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.history-section {
+  margin: 20px 0;
+}
+
+.history-section ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.history-section li {
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-left: 4px solid #3498db;
+}
+
+.history-section li strong {
+  color: #2c3e50;
+  font-weight: bold;
+}
+
+.legal-info {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #eef1f5;
+  border-radius: 5px;
+}
+
+.legal-info p, .legal-info abbr {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+.video-section, .audio-section {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.video-section video, .audio-section audio {
+  border: 3px solid #3498db;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+}
+
+.video-section h3, .audio-section h3 {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.api-section {
+  margin: 20px 0;
+}
+
+.api-section pre {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.partner-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 150px;
+  background-color: #ffffff;
+}
+
+.partner-logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #3498db;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.partner-name {
+  font-size: 14px;
+  font-weight: 500;
+  font-kerning: normal;
+  color: #333;
+  margin-top: 10px;
+}
+
+.latest-article {
+  position: relative;
+  background-color: #f8f8f8;
+  padding: 15px;
+  border-left: 5px solid #3498db;
+  margin: 20px 0;
+  z-index: 1;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+#hero, #banners, #services-catalog, #latest-news, #partners, #extra-content {
+  padding: 20px;
+}
+
+h2, h3, h4 {
+  color: #333;
+}
+
+p, a {
+  color: #555;
+}

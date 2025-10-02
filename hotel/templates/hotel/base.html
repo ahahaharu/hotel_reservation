@@ -16,6 +16,7 @@
 
     <title>{% block title %}LuxStay Hotel{% endblock %}</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="/static/styles/style.css"/>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -36,16 +37,12 @@
             src="{% static 'logo.png' %}"
             alt="Логотип LuxStay Hotel"
             style="height: 40px; margin-right: 10px"
-            ...
           />
         </a>
         <h1 itemprop="name">LuxStay Hotel</h1>
       </div>
 
-      <div
-        itemscope
-        itemtype="http://schema.org/DateTime"
-      >
+      <div itemscope itemtype="http://schema.org/DateTime">
         <div>
           <strong>Ваша тайм-зона:</strong>
           <time id="user-timezone" itemprop="timeZone"
@@ -56,7 +53,7 @@
           <strong>Текущая дата (Ваше время):</strong>
           <time
             datetime="{{ user_current_date|date:'Y-m-d' }}"
-            itemprop="dateTime"
+            itemprop="datePublished"
             >{{ user_current_date|date:"d/m/Y" }}</time
           >
         </div>
@@ -66,66 +63,62 @@
             >{{ utc_current_date|date:"d/m/Y" }}</time
           >
         </div>
-      </>
+      </div>
 
-      <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
-            <a href="{% url 'hotel:home' %}" itemprop="url"
-              ><span itemprop="name">Главная</span></a
-            >
-            <a href="{% url 'hotel:about' %}" itemprop="url"
-              ><span itemprop="name">О компании</span></a
-            >
-            <a href="{% url 'hotel:news' %}" itemprop="url"
-              ><span itemprop="name">Новости</span></a
-            >
-            <a href="{% url 'hotel:glossary' %}" itemprop="url"
-              ><span itemprop="name">Словарь</span></a
-            >
-
-            <a href="{% url 'hotel:contacts' %}" itemprop="url"
-              ><span itemprop="name">Контакты</span></a
-            >
- 
-            <a href="{% url 'hotel:privacy_policy' %}" itemprop="url"
-              ><span itemprop="name">Политика</span></a
-            >
-
-            <a href="{% url 'hotel:vacancies' %}" itemprop="url"
-              ><span itemprop="name">Вакансии</span></a
-            >
-            <a href="{% url 'hotel:reviews' %}" itemprop="url"
-              ><span itemprop="name">Отзывы</span></a
-            >
-            <a href="{% url 'hotel:promo_codes' %}" itemprop="url"
-              ><span itemprop="name">Промокоды</span></a
-            >
-            <a href="{% url 'hotel:services' %}" itemprop="url"
-              ><span itemprop="name">Наши услуги</span></a
-            >
-            <a href="{% url 'hotel:room_list' %}" itemprop="url"
-              ><span itemprop="name">Номера</span></a
-            >
-
-  
-            <a href="{% url 'hotel:cart_view' %}" title="Корзина">
-              Корзина {% comment %} TODO: Add cart items count here when
-              context processor is implemented {% endcomment %}
-            </a>
-  
-
-          {% if user.is_authenticated %} {% if user.is_staff or user.is_superuser %}
-            <a href="{% url 'hotel:staff_dashboard' %}">Панель персонала</a>
-          <a href="{% url 'admin:index' %}">Админ-панель</a>
-          <a href="{% url 'hotel:statistics' %}">Статистика</a>
-          {% else %}
-          <a href="{% url 'hotel:client_dashboard' %}">Мой кабинет</a>
-          {% endif %}
-          <a href="{% url 'hotel:logout' %}">Выйти</a>
-          {% else %}
-          <a href="{% url 'hotel:login' %}">Войти</a>
-          <a href="{% url 'hotel:register' %}">Регистрация</a>
-          {% endif %}
-      
+      <nav
+        class="fixed-nav"
+        itemscope
+        itemtype="http://schema.org/SiteNavigationElement"
+      >
+        <a href="{% url 'hotel:home' %}" itemprop="url"
+          ><span itemprop="name">Главная</span></a
+        >
+        <a href="{% url 'hotel:about' %}" itemprop="url"
+          ><span itemprop="name">О компании</span></a
+        >
+        <a href="{% url 'hotel:news' %}" itemprop="url"
+          ><span itemprop="name">Новости</span></a
+        >
+        <a href="{% url 'hotel:glossary' %}" itemprop="url"
+          ><span itemprop="name">Словарь</span></a
+        >
+        <a href="{% url 'hotel:contacts' %}" itemprop="url"
+          ><span itemprop="name">Контакты</span></a
+        >
+        <a href="{% url 'hotel:privacy_policy' %}" itemprop="url"
+          ><span itemprop="name">Политика</span></a
+        >
+        <a href="{% url 'hotel:vacancies' %}" itemprop="url"
+          ><span itemprop="name">Вакансии</span></a
+        >
+        <a href="{% url 'hotel:reviews' %}" itemprop="url"
+          ><span itemprop="name">Отзывы</span></a
+        >
+        <a href="{% url 'hotel:promo_codes' %}" itemprop="url"
+          ><span itemprop="name">Промокоды</span></a
+        >
+        <a href="{% url 'hotel:services' %}" itemprop="url"
+          ><span itemprop="name">Наши услуги</span></a
+        >
+        <a href="{% url 'hotel:room_list' %}" itemprop="url"
+          ><span itemprop="name">Номера</span></a
+        >
+        <a href="{% url 'hotel:cart_view' %}" title="Корзина">
+          Корзина {% comment %} TODO: Add cart items count here when context
+          processor is implemented {% endcomment %}
+        </a>
+        {% if user.is_authenticated %} {% if user.is_staff or user.is_superuser %}
+        <a href="{% url 'hotel:staff_dashboard' %}">Панель персонала</a>
+        <a href="{% url 'admin:index' %}">Админ-панель</a>
+        <a href="{% url 'hotel:statistics' %}">Статистика</a>
+        {% else %}
+        <a href="{% url 'hotel:client_dashboard' %}">Мой кабинет</a>
+        {% endif %}
+        <a href="{% url 'hotel:logout' %}">Выйти</a>
+        {% else %}
+        <a href="{% url 'hotel:login' %}">Войти</a>
+        <a href="{% url 'hotel:register' %}">Регистрация</a>
+        {% endif %}
       </nav>
     </header>
 
@@ -136,7 +129,9 @@
         <div>{{ message }}</div>
         {% endfor %}
       </section>
-      {% endif %} {% block content %} {% endblock %}
+      {% endif %}
+      {% block content %}
+      {% endblock %}
     </main>
 
     <footer itemscope itemtype="http://schema.org/WPFooter">

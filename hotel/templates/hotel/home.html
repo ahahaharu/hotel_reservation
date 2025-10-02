@@ -1,5 +1,8 @@
-{% extends "hotel/base.html" %} {% block title %}Главная - LuxStay
-Hotel{%endblock %} {% block content %}
+{% extends "hotel/base.html" %}
+
+{% block title %}Главная - LuxStay Hotel{% endblock %}
+
+{% block content %}
 <section id="hero" itemscope itemtype="http://schema.org/Organization">
   <h2 itemprop="name">Добро пожаловать в LuxStay Hotel!</h2>
   <p itemprop="description">Лучший отель для вашего комфортного отдыха</p>
@@ -9,10 +12,10 @@ Hotel{%endblock %} {% block content %}
 <section id="banners">
   <h3>Специальные предложения</h3>
   <div style="display: flex">
-  {% for banner in banners %}
-  <figure>
-    {% if banner.link %}
-    <a href="{{ banner.link }}" target="_blank" rel="noopener">
+    {% for banner in banners %}
+    <figure>
+      {% if banner.link %}
+      <a href="{{ banner.link }}" target="_blank" rel="noopener">
       {% endif %}
       <img
         src="{{ banner.image.url }}"
@@ -21,12 +24,12 @@ Hotel{%endblock %} {% block content %}
         style="height: 200px; object-fit: cover;"
       />
       {% if banner.link %}
-    </a>
-    {% endif %}
-    <figcaption>{{ banner.title }}</figcaption>
-  </figure>
-  {% endfor %}
-</div>
+      </a>
+      {% endif %}
+      <figcaption>{{ banner.title }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
 </section>
 {% endif %}
 
@@ -68,7 +71,7 @@ Hotel{%endblock %} {% block content %}
 <section id="latest-news">
   <h3>Последние новости</h3>
   {% if latest_article %}
-  <article itemscope itemtype="http://schema.org/Article">
+  <article class="latest-article" itemscope itemtype="http://schema.org/Article">
     <h4 itemprop="headline">{{ latest_article.title }}</h4>
     <p itemprop="abstract">{{ latest_article.summary }}</p>
     <p>
@@ -91,69 +94,74 @@ Hotel{%endblock %} {% block content %}
 {% if partners %}
 <section id="partners">
   <h3>Наши партнеры</h3>
-  <div>
+  <div class="partners-grid">
     {% for partner in partners %}
-    <a
-      href="{{ partner.website_url }}"
-      target="_blank"
-      rel="noopener"
-      title="{{ partner.name }}"
-    >
-      <img
-        src="{{ partner.logo.url }}"
-        alt="Логотип {{ partner.name }}"
-        loading="lazy"
-      />
-    </a>
+    <div class="partner-card">
+      <a
+        href="{{ partner.website_url }}"
+        target="_blank"
+        rel="noopener"
+        title="{{ partner.name }}"
+      >
+        <img
+          src="{{ partner.logo.url }}"
+          alt="Логотип {{ partner.name }}"
+          loading="lazy"
+          class="partner-logo"
+        />
+        <span class="partner-name">{{ partner.name }}</span>
+      </a>
+    </div>
     {% endfor %}
   </div>
 </section>
 {% endif %}
 
 <!-- API Data Section -->
-  {% if daily_quote %}
-  <article>
-    <h3>Цитата дня</h3>
-    <blockquote cite="https://favqs.com">
-      <p><q>{{ daily_quote.quote }}</q></p>
-      <p>— <cite>{{ daily_quote.author }}</cite></p>
-    </blockquote>
-  </article>
-  {% endif %} {% if exchange_rates %}
-  <aside>
-    <h3>Текущие курсы валют (USD)</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>Валюта</th>
-          <th>Курс</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>EUR</td>
-          <td>{{ exchange_rates.EUR }}</td>
-        </tr>
-        <tr>
-          <td>GBP</td>
-          <td>{{ exchange_rates.GBP }}</td>
-        </tr>
-        <tr>
-          <td>BYN</td>
-          <td>{{ exchange_rates.BYN }}</td>
-        </tr>
-        <tr>
-          <td>RUB</td>
-          <td>{{ exchange_rates.RUB }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <p>
-      <small>Обновлено: <time>{{ exchange_rates.timestamp }}</time></small>
-    </p>
-  </aside>
-  {% endif %}
-</section>
+{% if daily_quote %}
+<article>
+  <h3>Цитата дня</h3>
+  <blockquote cite="https://favqs.com">
+    <p><q>{{ daily_quote.quote }}</q></p>
+    <p>— <cite>{{ daily_quote.author }}</cite></p>
+  </blockquote>
+</article>
+{% endif %}
+
+{% if exchange_rates %}
+<aside>
+  <h3>Текущие курсы валют (USD)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Валюта</th>
+        <th>Курс</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>EUR</td>
+        <td>{{ exchange_rates.EUR }}</td>
+      </tr>
+      <tr>
+        <td>GBP</td>
+        <td>{{ exchange_rates.GBP }}</td>
+      </tr>
+      <tr>
+        <td>BYN</td>
+        <td>{{ exchange_rates.BYN }}</td>
+      </tr>
+      <tr>
+        <td>RUB</td>
+        <td>{{ exchange_rates.RUB }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <small>Обновлено: <time>{{ exchange_rates.timestamp }}</time></small>
+  </p>
+</aside>
+{% endif %}
 
 <!-- Extra Content for HTML Requirements -->
 <section id="extra-content">
@@ -171,7 +179,6 @@ Hotel{%endblock %} {% block content %}
     <p>Лучший отель, в котором я когда-либо был!</p>
     <footer>— Довольный клиент</footer>
   </blockquote>
-
 
   <pre>
     Стихотворение о нашем отеле:
