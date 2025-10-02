@@ -3,25 +3,24 @@
 {% block title %}{{ article.title }} - Hotel{% endblock %}
 
 {% block content %}
-    <h2>{{ article.title }}</h2>
-    
-    <div>
+    <div class="article-detail">
+        <h2>{{ article.title }}</h2>
         {% if article.image %}
-            <img src="{{ article.image.url }}" alt="{{ article.title }}" style="height: 200px;">
+            <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-image">
         {% else %}
-            <img src="/media/placeholder.png" alt="No image" style="height: 200px;">
+            <img src="/static/images/placeholder.png" alt="No image" class="article-image">
         {% endif %}
-        <p><small>Published on: {{ article.published_date|date:"F d, Y" }}</small></p>
-        <div>
+        <p class="published-date">Published on: {{ article.published_date|date:"F d, Y" }}</p>
+        <div class="content">
             {{ article.content|linebreaks }}
         </div>
         {% if article.tags.all %}
-            <p><strong>Tags:</strong> 
+            <p class="tags"><strong>Tags:</strong> 
                 {% for tag in article.tags.all %}
-                    {{ tag.name }}{% if not forloop.last %}, {% endif %}
+                    <span class="tag">{{ tag.name }}</span>{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </p>
         {% endif %}
-        <a href="{% url 'hotel:news' %}">Вернуться к новостям</a>
+        <a href="{% url 'hotel:news' %}" class="back-to-news">Вернуться к новостям</a>
     </div>
 {% endblock %}
