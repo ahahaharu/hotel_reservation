@@ -349,10 +349,344 @@ body {
   background-color: #2980b9;
 }
 
-/* Responsive adjustment for multi-column */
+/* FAQ section */
+.faq-section {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.faq-section h2 {
+  font-family: 'Georgia', serif;
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.faq-item {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.faq-item[open], .faq-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.faq-question {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  font-family: 'Georgia', serif;
+  font-size: 18px;
+  color: #2c3e50;
+  cursor: pointer;
+}
+
+.faq-question small.faq-date {
+  font-size: 12px;
+  color: #777;
+}
+
+.faq-answer {
+  padding: 15px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #34495e;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  transition: max-height 0.3s ease;
+}
+
+/* Smooth transition for details expansion */
+details[open] .faq-answer {
+  animation: slide-down 0.3s ease;
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px; /* Adjust based on content */
+  }
+}
+
+/* Staff section */
+.staff-section {
+  padding: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.staff-section h2 {
+  font-family: 'Georgia', serif;
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.staff-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.staff-card {
+  display: flex;
+  flex-direction: row;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  padding: 15px;
+  transition: box-shadow 0.3s ease;
+}
+
+.staff-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.staff-photo {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 15px;
+  border: 2px solid #3498db;
+}
+
+.staff-info {
+  flex: 1;
+}
+
+.staff-info h3 {
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.staff-description {
+  font-size: 14px;
+  color: #34495e;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.staff-contact {
+  font-size: 14px;
+  color: #34495e;
+  margin-bottom: 5px;
+}
+
+.staff-contact a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.staff-contact a:hover {
+  text-decoration: underline;
+}
+
+/* Contact table section */
+.contact-table-section {
+  padding: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.contact-table-section h3 {
+  font-family: 'Georgia', serif;
+  font-size: 24px;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.contact-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-table caption {
+  font-size: 16px;
+  color: #2c3e50;
+  padding: 10px;
+  font-weight: bold;
+}
+
+.contact-table th,
+.contact-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.contact-table th {
+  background-color: #3498db;
+  color: #ffffff;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+}
+
+.contact-table td {
+  font-size: 14px;
+  color: #34495e;
+}
+
+.contact-table a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.contact-table a:hover {
+  text-decoration: underline;
+}
+
+/* Privacy Policy section */
+.privacy-policy-section {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.privacy-policy-section h2 {
+  font-family: 'Georgia', serif;
+  font-size: 28px;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.policy-content {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.effective-date {
+  font-size: 16px;
+  color: #34495e;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.policy-icon {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.intro-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.policy-section {
+  margin-bottom: 20px;
+}
+
+.policy-section h3 {
+  font-family: 'Georgia', serif;
+  font-size: 20px;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.policy-list {
+  list-style: disc;
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.policy-list li {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+.policy-content p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.policy-link {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.policy-link:hover {
+  text-decoration: underline;
+}
+
+.closing-text {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #34495e;
+  margin-top: 20px;
+  font-style: italic;
+}
+
+/* Responsive adjustment for staff, table, and privacy policy */
 @media (max-width: 600px) {
+  .staff-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .staff-photo {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
   .article-detail .content {
     column-count: 1; /* Single column on small screens */
+  }
+
+  .contact-table {
+    font-size: 12px;
+  }
+
+  .contact-table th,
+  .contact-table td {
+    padding: 8px;
+  }
+
+  .privacy-policy-section {
+    padding: 15px;
+  }
+
+  .policy-content {
+    padding: 15px;
+  }
+
+  .policy-icon {
+    max-width: 150px;
   }
 }
 
@@ -364,6 +698,7 @@ body {
   padding: 20px;
 }
 
+/* Partner card */
 .partner-card {
   display: flex;
   flex-direction: column;
@@ -382,6 +717,7 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Partner name */
 .partner-name {
   font-size: 14px;
   font-weight: 500;
@@ -390,6 +726,7 @@ body {
   margin-top: 10px;
 }
 
+/* Latest article */
 .latest-article {
   position: relative;
   background-color: #f8f8f8;

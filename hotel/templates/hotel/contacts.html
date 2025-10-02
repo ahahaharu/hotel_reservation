@@ -3,35 +3,39 @@
 {% block title %}Contacts - Hotel{% endblock %}
 
 {% block content %}
-<h2>Our Team</h2>
+<div class="staff-section">
+    <h2>Our Team</h2>
 
-{% if staff %}
-    <div>
-        {% for member in staff %}
-            <div>
-                {% if member.photo %}
-                    <img src="{{ member.photo.url }}" alt="{{ member.name }}" style="height: 200px;">
-                {% else %}
-                    <img src="/media/placeholder.png" alt="No photo" style="height: 200px;">
-                {% endif %}
-                <h3>{{ member.name }} - {{ member.position }}</h3>
-                <p>{{ member.description|linebreaks }}</p>
-                {% if member.email %}
-                    <p><strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a></p>
-                {% endif %}
-                {% if member.phone %}
-                    <p><strong>Phone:</strong> {{ member.phone }}</p>
-                {% endif %}
-            </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <p>No staff information available.</p>
-{% endif %}
+    {% if staff %}
+        <div class="staff-list">
+            {% for member in staff %}
+                <div class="staff-card">
+                    {% if member.photo %}
+                        <img src="{{ member.photo.url }}" alt="{{ member.name }}" class="staff-photo">
+                    {% else %}
+                        <img src="/static/images/placeholder.png" alt="No photo" class="staff-photo">
+                    {% endif %}
+                    <div class="staff-info">
+                        <h3>{{ member.name }} - {{ member.position }}</h3>
+                        <p class="staff-description">{{ member.description|linebreaks }}</p>
+                        {% if member.email %}
+                            <p class="staff-contact"><strong>Email:</strong> <a href="mailto:{{ member.email }}">{{ member.email }}</a></p>
+                        {% endif %}
+                        {% if member.phone %}
+                            <p class="staff-contact"><strong>Phone:</strong> {{ member.phone }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No staff information available.</p>
+    {% endif %}
+</div>
 
-<section id="contact-info">
+<section id="contact-info" class="contact-table-section">
     <h3>Contact Information</h3>
-    <table>
+    <table class="contact-table">
         <caption>Our Hotel Branches</caption>
         <thead>
             <tr>
